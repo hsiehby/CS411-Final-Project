@@ -8,17 +8,15 @@ const SELECT_TEST = "SELECT * FROM authors WHERE name = 'sampleName'";
 var current_id = 10001;
 
 const app = express();
-const connection = mysql.createConnection({
+
+const pool = mysql.createPool({
+    connectionLimit: 100,
+    waitForConnections: true,
+    queueLimit: 0,
     host: "18.217.28.210",
     user: "developer",
     password: "@TeamTower2020",
     database: "google_scholar_db"
-});
-
-connection.connect(err => {
-    if (err) {
-        return err;
-    }
 });
 
 app.use(cors());
@@ -28,12 +26,18 @@ app.get('/', (req, res) => {
 });
 
 app.get('/authors', (req, res) => {
-    connection.query(SELECT_ALL, function (err, results, fields) {
+    pool.getConnection((err, connection) => {
         if (err) {
             return res.send(err);
         } else {
-            return res.json({
-                data: results
+            connection.query(SELECT_ALL, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.json({ data: results });
+                }
             });
         }
     });
@@ -43,11 +47,19 @@ app.get('/authors/add', (req, res) => {
     const { name, affiliation, citedby, attributes, page, email, interests, url_picture } = req.query;
     const INSERT_AUTHOR = `INSERT INTO authors (id, name, affiliation, citedby, attributes, page, email, interests, url_picture)`
         + `VALUES(` + (current_id++) + `, '${name}', '${affiliation}', '${citedby}', '${attributes}', '${page}', '${email}', '${interests}', '${url_picture}')`;
-    connection.query(INSERT_AUTHOR, (err, results) => {
+    pool.getConnection((err, connection) => {
         if (err) {
             return res.send(err);
         } else {
-            return res.send("successfully added author");
+            connection.query(INSERT_AUTHOR, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.send("successfully added author");
+                }
+            });
         }
     });
 });
@@ -55,11 +67,19 @@ app.get('/authors/add', (req, res) => {
 app.get('/authors/delete', (req, res) => {
     const { id } = req.query;
     const DELETE_AUTHOR = `DELETE FROM authors WHERE id = '${id}'`;
-    connection.query(DELETE_AUTHOR, (err, results) => {
+    pool.getConnection((err, connection) => {
         if (err) {
             return res.send(err);
         } else {
-            return res.send("successfully deleted author");
+            connection.query(DELETE_AUTHOR, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.send("successfully deleted author");
+                }
+            });
         }
     });
 });
@@ -105,11 +125,20 @@ app.get('/authors/update', (req, res) => {
         UPDATE_AUTHOR = UPDATE_AUTHOR.substring(0, UPDATE_AUTHOR.length - 2);
     }
     UPDATE_AUTHOR = UPDATE_AUTHOR + `WHERE id = '${id}'`;
-    connection.query(UPDATE_AUTHOR, columns, (err, results) => {
+
+    pool.getConnection((err, connection) => {
         if (err) {
             return res.send(err);
         } else {
-            return res.send("successfully updated author");
+            connection.query(UPDATE_AUTHOR, columns, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.send("successfully updated author");
+                }
+            });
         }
     });
 });
