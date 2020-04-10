@@ -53,13 +53,63 @@ app.get('/authors/add', (req, res) => {
 });
 
 app.get('/authors/delete', (req, res) => {
-    const { name } = req.query;
-    const DELETE_AUTHOR = `DELETE FROM authors WHERE name = '${name}'`;
+    const { id } = req.query;
+    const DELETE_AUTHOR = `DELETE FROM authors WHERE id = '${id}'`;
     connection.query(DELETE_AUTHOR, (err, results) => {
         if (err) {
             return res.send(err);
         } else {
             return res.send("successfully deleted author");
+        }
+    });
+});
+
+app.get('/authors/update', (req, res) => {
+    const { id, name, affiliation, citedby, attributes, page, email, interests, url_picture } = req.query;
+    var UPDATE_AUTHOR = `UPDATE authors `
+        + `SET `;
+    var columns = [];
+    if (name) {
+        UPDATE_AUTHOR = UPDATE_AUTHOR + `name=?, `;
+        columns.push(name);
+    }
+    if (affiliation) {
+        UPDATE_AUTHOR = UPDATE_AUTHOR + `affiliation = ?, `;
+        columns.push(affiliation);
+    }
+    if (citedby) {
+        UPDATE_AUTHOR = UPDATE_AUTHOR + `citedby = ?, `;
+        columns.push(citedby);
+    }
+    if (attributes) {
+        UPDATE_AUTHOR = UPDATE_AUTHOR + `attributes = ?, `;
+        columns.push(attributes);
+    }
+    if (page) {
+        UPDATE_AUTHOR = UPDATE_AUTHOR + `page = ?, `;
+        columns.push(page);
+    }
+    if (email) {
+        UPDATE_AUTHOR = UPDATE_AUTHOR + `email = ?, `;
+        columns.push(email);
+    }
+    if (interests) {
+        UPDATE_AUTHOR = UPDATE_AUTHOR + `interests = ?, `;
+        columns.push(interests);
+    }
+    if (url_picture) {
+        UPDATE_AUTHOR = UPDATE_AUTHOR + `url_picture = ?`;
+        columns.push(url_picture);
+    }
+    if (UPDATE_AUTHOR.charAt(UPDATE_AUTHOR.length - 2) == ',') {
+        UPDATE_AUTHOR = UPDATE_AUTHOR.substring(0, UPDATE_AUTHOR.length - 2);
+    }
+    UPDATE_AUTHOR = UPDATE_AUTHOR + `WHERE id = '${id}'`;
+    connection.query(UPDATE_AUTHOR, columns, (err, results) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            return res.send("successfully updated author");
         }
     });
 });
