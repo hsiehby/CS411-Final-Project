@@ -1,0 +1,72 @@
+.container {
+    padding: 1rem;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+}
+
+.display_results {
+    padding: 1rem;
+    display: flex;
+    flex: 2;
+    flex-direction: column;
+    flex-wrap: nowrap;
+}
+
+.edit_authors {
+    padding: 1rem;
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+}
+
+.add_author {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+}
+
+.delete_author {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+}
+
+.update_author {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+}
+
+.author_item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    flex-basis: 20%;
+    padding: 0.5rem 0.75rem;
+    box-sizing: border-box;
+}
+
+.author_id {
+    display: flex;
+    flex: 1;
+}
+
+.author_image {
+    width: 200px;
+    height: 200px;
+    flex: 2;
+}
+
+.author_info {
+    display: flex;
+    flex: 4;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: 0.5rem;
+    text-align: right;
+}

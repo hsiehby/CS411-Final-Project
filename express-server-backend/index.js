@@ -2,10 +2,10 @@ const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql');
 
-const SELECT_ALL = "SELECT * from authors limit 10";
+const SELECT_ALL = "SELECT * from authors ORDER BY id DESC limit 10";
 const SELECT_TEST = "SELECT * FROM authors WHERE name = 'sampleName'";
 
-var current_id = 1001;
+var current_id = 10001;
 
 const app = express();
 const connection = mysql.createConnection({
@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/authors', (req, res) => {
-    connection.query(SELECT_TEST, function (err, results, fields) {
+    connection.query(SELECT_ALL, function (err, results, fields) {
         if (err) {
             return res.send(err);
         } else {
