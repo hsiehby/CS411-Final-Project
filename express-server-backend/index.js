@@ -7,6 +7,15 @@ const SELECT_ALL_ARTICLES = "SELECT * from articles ORDER BY id DESC limit 10";
 const SELECT_ALL_AFFILS = "SELECT * from affiliations ORDER BY id limit 10";
 const SELECT_ALL_USERS = "SELECT * from users ORDER BY id limit 10";
 
+const SELECT_ALL_AUTHOREDBY = "SELECT * from authoredBy ORDER BY articleId limit 10";
+const SELECT_ALL_LIKEDBY = "SELECT * from likedBy ORDER BY articleId limit 10";
+const SELECT_ALL_ACCESSEDBY = "SELECT * from accessedBy ORDER BY articleId limit 10";
+const SELECT_ALL_FOLLOWEDBY = "SELECT * from followedBy ORDER BY userId limit 10";
+const SELECT_ALL_ARTICLEAFFILWITH = "SELECT * from articleAffiliatedWith ORDER BY affilId limit 10";
+const SELECT_ALL_AUTHORAFFILWITH = "SELECT * from authorAffiliatedWith ORDER BY affilId limit 10";
+const SELECT_ALL_USERAFFILWITH = "SELECT * from userAffiliatedWith ORDER BY affilId limit 10";
+
+
 const SELECT_TEST = "SELECT * FROM authors WHERE name = 'sampleName'";
 
 var current_author_id = 10001;
@@ -32,7 +41,13 @@ app.get('/', (req, res) => {
     res.send("go to /authors to see authors");
 });
 
-/** --AUTHORS-- **/
+/** ----------------------------------------------------------------------------------------------------------PORT-- **/
+app.listen(3030, () => {
+    console.log("server listening on port 3030");
+});
+
+/** ----------------------------------------------------------------------------------------------------------------------------OBJECTS **/
+/** ----------------------------------------------------------------------------------------------------------AUTHORS-- **/
 app.get('/authors', (req, res) => {
     pool.getConnection((err, connection) => {
         if (err) {
@@ -151,7 +166,7 @@ app.get('/authors/update', (req, res) => {
     });
 });
 
-/** --ARTICLES-- **/
+/** ----------------------------------------------------------------------------------------------------------ARTICLES-- **/
 app.get('/articles', (req, res) => {
     pool.getConnection((err, connection) => {
         if (err) {
@@ -279,7 +294,7 @@ app.get('/articles/update', (req, res) => {
     });
 });
 
-/** --AFFILIATIONS-- **/
+/** ----------------------------------------------------------------------------------------------------------AFFILIATIONS-- **/
 app.get('/affiliations', (req, res) => {
     pool.getConnection((err, connection) => {
         if (err) {
@@ -298,7 +313,7 @@ app.get('/affiliations', (req, res) => {
     });
 });
 
-/** --USERS-- **/
+/** ----------------------------------------------------------------------------------------------------------USERS-- **/
 app.get('/users', (req, res) => {
     pool.getConnection((err, connection) => {
         if (err) {
@@ -317,7 +332,136 @@ app.get('/users', (req, res) => {
     });
 });
 
-/** --PORT-- **/
-app.listen(3030, () => {
-    console.log("server listening on port 3030");
+/** ----------------------------------------------------------------------------------------------------------------------------RELATIONS **/
+/** ----------------------------------------------------------------------------------------------------------Authored By-- **/
+app.get('/authoredBy', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(SELECT_ALL_AUTHOREDBY, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.json({ data: results });
+                }
+            });
+        }
+    });
+});
+
+/** ----------------------------------------------------------------------------------------------------------Liked By-- **/
+app.get('/likedBy', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(SELECT_ALL_LIKEDBY, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.json({ data: results });
+                }
+            });
+        }
+    });
+});
+
+/** ----------------------------------------------------------------------------------------------------------Accessed By-- **/
+app.get('/accessedBy', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(SELECT_ALL_ACCESSEDBY, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.json({ data: results });
+                }
+            });
+        }
+    });
+});
+
+/** ----------------------------------------------------------------------------------------------------------Followed By-- **/
+app.get('/followedBy', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(SELECT_ALL_FOLLOWEDBY, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.json({ data: results });
+                }
+            });
+        }
+    });
+});
+
+/** ----------------------------------------------------------------------------------------------------------Article Affiliated With-- **/
+app.get('/articleAffiliatedWith', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(SELECT_ALL_ARTICLEAFFILWITH, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.json({ data: results });
+                }
+            });
+        }
+    });
+});
+
+/** ----------------------------------------------------------------------------------------------------------Author Affiliated With-- **/
+app.get('/authorAffiliatedWith', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(SELECT_ALL_AUTHORAFFILWITH, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.json({ data: results });
+                }
+            });
+        }
+    });
+});
+
+/** ----------------------------------------------------------------------------------------------------------User Affiliated With-- **/
+app.get('/userAffiliatedWith', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(SELECT_ALL_USERAFFILWITH, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.json({ data: results });
+                }
+            });
+        }
+    });
 });
