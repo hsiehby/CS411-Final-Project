@@ -313,6 +313,82 @@ app.get('/affiliations', (req, res) => {
     });
 });
 
+app.get('/affiliations/add', (req, res) => {
+    const { name, popular_topics } = req.query;
+    const INSERT_AFFIL = `INSERT INTO affiliations (id, name, popular_topics)`
+        + `VALUES(` + (current_affiliation_id++) + `, '${name}', '${popular_topics}')`;
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(INSERT_AFFIL, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.send("successfully added affiliation");
+                }
+            });
+        }
+    });
+});
+
+app.get('/affiliations/delete', (req, res) => {
+    const { id } = req.query;
+    const DELETE_AFFIL = `DELETE FROM affiliations WHERE id = '${id}'`;
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(DELETE_AFFIL, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.send("successfully deleted affiliation");
+                }
+            });
+        }
+    });
+});
+
+app.get('/affiliations/update', (req, res) => {
+    const { id, name, popular_topics } = req.query;
+    var UPDATE_AFFIL = `UPDATE affiliations `
+        + `SET `;
+    var columns = [];
+    if (name) {
+        UPDATE_AFFIL = UPDATE_AFFIL + `name=?, `;
+        columns.push(name);
+    }
+    if (popular_topics) {
+        UPDATE_AFFIL = UPDATE_AFFIL + `pub_title = ?, `;
+        columns.push(pub_title);
+    }
+
+    if (UPDATE_AFFIL.charAt(UPDATE_AFFIL.length - 2) == ',') {
+        UPDATE_AFFIL = UPDATE_AFFIL.substring(0, UPDATE_AFFIL.length - 2);
+    }
+    UPDATE_AFFIL = UPDATE_AFFIL + `WHERE id = '${id}'`;
+
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(UPDATE_AFFIL, columns, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.send("successfully updated affiliation");
+                }
+            });
+        }
+    });
+});
 /** ----------------------------------------------------------------------------------------------------------USERS-- **/
 app.get('/users', (req, res) => {
     pool.getConnection((err, connection) => {
