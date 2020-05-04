@@ -409,6 +409,27 @@ app.get('/users', (req, res) => {
     });
 });
 
+app.get('/users/login', (req, res) => {
+    const { email, password } = req.query;
+    const MATCH = `SELECT * FROM users WHERE email = '${email}' AND password = '${password}'`;
+
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(MATCH, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.json({ data: results });
+                }
+            });
+        }
+    });
+});
+
 app.get('/users/add', (req, res) => {
     const { name, email, interests } = req.query;
     const INSERT_USER = `INSERT INTO users (id, name, email, interests)`
