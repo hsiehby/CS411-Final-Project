@@ -493,17 +493,74 @@ app.get('/users/update', (req, res) => {
 /** ----------------------------------------------------------------------------------------------------------------------------RELATIONS **/
 /** ----------------------------------------------------------------------------------------------------------Authored By-- **/
 app.get('/authoredBy', (req, res) => {
+    const { articleId, authorId } = req.query;
+    var SELECT_AUTHOREDBY = "SELECT * from authoredBy ";
+    if (articleId && !authorId) {
+        SELECT_AUTHOREDBY += `WHERE articleId = ${articleId}`;
+    }
+    else if (!articleId && authorId) {
+        SELECT_AUTHOREDBY += `WHERE authorId = ${authorId}`;
+    }
+    else if (articleId && authorId) {
+        SELECT_AUTHOREDBY += `WHERE articleId = ${articleId} AND authorId = ${authorId}`;
+    }
+    else {
+        SELECT_AUTHOREDBY = SELECT_ALL_AUTHOREDBY;
+    }
+
     pool.getConnection((err, connection) => {
         if (err) {
             return res.send(err);
         } else {
-            connection.query(SELECT_ALL_AUTHOREDBY, (err, results) => {
+            connection.query(SELECT_AUTHOREDBY, (err, results) => {
                 if (err) {
                     connection.release();
                     return res.send(err);
                 } else {
                     connection.release();
                     return res.json({ data: results });
+                }
+            });
+        }
+    });
+});
+
+
+app.get('/authoredBy/add', (req, res) => {
+    const { articleId, authorId } = req.query;
+    const INSERT_AUTHOREDBY = `INSERT INTO authoredBy (articleId, authorId)`
+        + `VALUES('${articleId}', '${authorId}')`;
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(INSERT_AUTHOREDBY, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.send("successfully added authoredBy relation");
+                }
+            });
+        }
+    });
+});
+
+app.get('/authoredBy/delete', (req, res) => {
+    const { articleId, authorId } = req.query;
+    const DELETE_AUTHOREDBY = `DELETE FROM authoredBy WHERE articleId = '${articleId}' AND authorId = '${authorId}'`;
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(DELETE_AUTHOREDBY, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.send("successfully deleted authoredBy relation");
                 }
             });
         }
@@ -512,17 +569,73 @@ app.get('/authoredBy', (req, res) => {
 
 /** ----------------------------------------------------------------------------------------------------------Liked By-- **/
 app.get('/likedBy', (req, res) => {
+    const { articleId, userId } = req.query;
+    var SELECT_LIKEDBY = "SELECT * from likedBy ";
+    if (articleId && !userId) {
+        SELECT_LIKEDBY += `WHERE articleId = ${articleId}`;
+    }
+    else if (!articleId && userId) {
+        SELECT_LIKEDBY += `WHERE userId = ${userId}`;
+    }
+    else if (articleId && userId) {
+        SELECT_LIKEDBY += `WHERE articleId = ${articleId} AND userId = ${userId}`;
+    }
+    else {
+        SELECT_LIKEDBY = SELECT_ALL_LIKEDBY;
+    }
+
     pool.getConnection((err, connection) => {
         if (err) {
             return res.send(err);
         } else {
-            connection.query(SELECT_ALL_LIKEDBY, (err, results) => {
+            connection.query(SELECT_LIKEDBY, (err, results) => {
                 if (err) {
                     connection.release();
                     return res.send(err);
                 } else {
                     connection.release();
                     return res.json({ data: results });
+                }
+            });
+        }
+    });
+});
+
+app.get('/likedBy/add', (req, res) => {
+    const { articleId, userId } = req.query;
+    const INSERT_BY = `INSERT INTO likedBy (articleId, userId)`
+        + `VALUES('${articleId}', '${userId}')`;
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(INSERT_BY, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.send("successfully added likedBy relation");
+                }
+            });
+        }
+    });
+});
+
+app.get('/likedBy/delete', (req, res) => {
+    const { articleId, userId } = req.query;
+    const DELETE_BY = `DELETE FROM likedBy WHERE articleId = '${articleId}' AND userId = '${userId}'`;
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(DELETE_BY, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.send("successfully deleted likedBy relation");
                 }
             });
         }
@@ -531,17 +644,73 @@ app.get('/likedBy', (req, res) => {
 
 /** ----------------------------------------------------------------------------------------------------------Accessed By-- **/
 app.get('/accessedBy', (req, res) => {
+    const { articleId, userId } = req.query;
+    var SELECT_ACCESSEDBY = "SELECT * from accessedBy ";
+    if (articleId && !userId) {
+        SELECT_ACCESSEDBY += `WHERE articleId = ${articleId}`;
+    }
+    else if (!articleId && userId) {
+        SELECT_ACCESSEDBY += `WHERE userId = ${userId}`;
+    }
+    else if (articleId && userId) {
+        SELECT_ACCESSEDBY += `WHERE articleId = ${articleId} AND userId = ${userId}`;
+    }
+    else {
+        SELECT_ACCESSEDBY = SELECT_ALL_ACCESSEDBY;
+    }
+
     pool.getConnection((err, connection) => {
         if (err) {
             return res.send(err);
         } else {
-            connection.query(SELECT_ALL_ACCESSEDBY, (err, results) => {
+            connection.query(SELECT_ACCESSEDBY, (err, results) => {
                 if (err) {
                     connection.release();
                     return res.send(err);
                 } else {
                     connection.release();
                     return res.json({ data: results });
+                }
+            });
+        }
+    });
+});
+
+app.get('/accessedBy/add', (req, res) => {
+    const { articleId, userId } = req.query;
+    const INSERT_BY = `INSERT INTO accessedBy (articleId, userId)`
+        + `VALUES('${articleId}', '${userId}')`;
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(INSERT_BY, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.send("successfully added accessedBy relation");
+                }
+            });
+        }
+    });
+});
+
+app.get('/accessedBy/delete', (req, res) => {
+    const { articleId, userId } = req.query;
+    const DELETE_BY = `DELETE FROM accessedBy WHERE articleId = '${articleId}' AND userId = '${userId}'`;
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(DELETE_BY, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.send("successfully deleted accessedBy relation");
                 }
             });
         }
@@ -550,17 +719,73 @@ app.get('/accessedBy', (req, res) => {
 
 /** ----------------------------------------------------------------------------------------------------------Followed By-- **/
 app.get('/followedBy', (req, res) => {
+    const { authorId, userId } = req.query;
+    var SELECT_FOLLOWEDBY = "SELECT * from followedBy ";
+    if (authorId && !userId) {
+        SELECT_FOLLOWEDBY += `WHERE authorId = ${authorId}`;
+    }
+    else if (!authorId && userId) {
+        SELECT_FOLLOWEDBY += `WHERE userId = ${userId}`;
+    }
+    else if (authorId && userId) {
+        SELECT_FOLLOWEDBY += `WHERE authorId = ${authorId} AND userId = ${userId}`;
+    }
+    else {
+        SELECT_FOLLOWEDBY = SELECT_ALL_FOLLOWEDBY;
+    }
+
     pool.getConnection((err, connection) => {
         if (err) {
             return res.send(err);
         } else {
-            connection.query(SELECT_ALL_FOLLOWEDBY, (err, results) => {
+            connection.query(SELECT_FOLLOWEDBY, (err, results) => {
                 if (err) {
                     connection.release();
                     return res.send(err);
                 } else {
                     connection.release();
                     return res.json({ data: results });
+                }
+            });
+        }
+    });
+});
+
+app.get('/followedBy/add', (req, res) => {
+    const { authorId, userId } = req.query;
+    const INSERT_BY = `INSERT INTO followedBy (authorId, userId)`
+        + `VALUES('${authorId}', '${userId}')`;
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(INSERT_BY, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.send("successfully added followedBy relation");
+                }
+            });
+        }
+    });
+});
+
+app.get('/followedBy/delete', (req, res) => {
+    const { authorId, userId } = req.query;
+    const DELETE_BY = `DELETE FROM followedBy WHERE authorId = '${authorId}' AND userId = '${userId}'`;
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(DELETE_BY, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.send("successfully deleted followedBy relation");
                 }
             });
         }
@@ -569,17 +794,73 @@ app.get('/followedBy', (req, res) => {
 
 /** ----------------------------------------------------------------------------------------------------------Article Affiliated With-- **/
 app.get('/articleAffiliatedWith', (req, res) => {
+    const { articleId, affilId } = req.query;
+    var SELECT_ARTICLEAFFILWITH = "SELECT * from articleAffiliatedWith ";
+    if (articleId && !affilId) {
+        SELECT_ARTICLEAFFILWITH += `WHERE articleId = ${articleId}`;
+    }
+    else if (!articleId && affilId) {
+        SELECT_ARTICLEAFFILWITH += `WHERE affilId = ${affilId}`;
+    }
+    else if (articleId && affilId) {
+        SELECT_ARTICLEAFFILWITH += `WHERE articleId = ${articleId} AND affilId = ${affilId}`;
+    }
+    else {
+        SELECT_ARTICLEAFFILWITH = SELECT_ALL_ARTICLEAFFILWITH;
+    }
+
     pool.getConnection((err, connection) => {
         if (err) {
             return res.send(err);
         } else {
-            connection.query(SELECT_ALL_ARTICLEAFFILWITH, (err, results) => {
+            connection.query(SELECT_ARTICLEAFFILWITH, (err, results) => {
                 if (err) {
                     connection.release();
                     return res.send(err);
                 } else {
                     connection.release();
                     return res.json({ data: results });
+                }
+            });
+        }
+    });
+});
+
+app.get('/articleAffiliatedWith/add', (req, res) => {
+    const { articleId, affilId } = req.query;
+    const INSERT_BY = `INSERT INTO articleAffiliatedWith (articleId, affilId)`
+        + `VALUES('${articleId}', '${affilId}')`;
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(INSERT_BY, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.send("successfully added articleAffiliatedWith relation");
+                }
+            });
+        }
+    });
+});
+
+app.get('/articleAffiliatedWith/delete', (req, res) => {
+    const { articleId, affilId } = req.query;
+    const DELETE_BY = `DELETE FROM articleAffiliatedWith WHERE articleId = '${articleId}' AND affilId = '${affilId}'`;
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(DELETE_BY, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.send("successfully deleted articleAffiliatedWith relation");
                 }
             });
         }
@@ -588,11 +869,26 @@ app.get('/articleAffiliatedWith', (req, res) => {
 
 /** ----------------------------------------------------------------------------------------------------------Author Affiliated With-- **/
 app.get('/authorAffiliatedWith', (req, res) => {
+    const { authorId, affilId } = req.query;
+    var SELECT_AUTHORAFFILWITH = "SELECT * from authorAffiliatedWith ";
+    if (authorId && !affilId) {
+        SELECT_AUTHORAFFILWITH += `WHERE authorId = ${authorId}`;
+    }
+    else if (!authorId && affilId) {
+        SELECT_AUTHORAFFILWITH += `WHERE affilId = ${affilId}`;
+    }
+    else if (authorId && affilId) {
+        SELECT_AUTHORAFFILWITH += `WHERE authorId = ${authorId} AND affilId = ${affilId}`;
+    }
+    else {
+        SELECT_AUTHORAFFILWITH = SELECT_ALL_AUTHORAFFILWITH;
+    }
+
     pool.getConnection((err, connection) => {
         if (err) {
             return res.send(err);
         } else {
-            connection.query(SELECT_ALL_AUTHORAFFILWITH, (err, results) => {
+            connection.query(SELECT_AUTHORAFFILWITH, (err, results) => {
                 if (err) {
                     connection.release();
                     return res.send(err);
@@ -605,19 +901,116 @@ app.get('/authorAffiliatedWith', (req, res) => {
     });
 });
 
-/** ----------------------------------------------------------------------------------------------------------User Affiliated With-- **/
-app.get('/userAffiliatedWith', (req, res) => {
+app.get('/authorAffiliatedWith/add', (req, res) => {
+    const { authorId, affilId } = req.query;
+    const INSERT_BY = `INSERT INTO authorAffiliatedWith (authorId, affilId)`
+        + `VALUES('${authorId}', '${affilId}')`;
     pool.getConnection((err, connection) => {
         if (err) {
             return res.send(err);
         } else {
-            connection.query(SELECT_ALL_USERAFFILWITH, (err, results) => {
+            connection.query(INSERT_BY, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.send("successfully added authorAffiliatedWith relation");
+                }
+            });
+        }
+    });
+});
+
+app.get('/authorAffiliatedWith/delete', (req, res) => {
+    const { authorId, affilId } = req.query;
+    const DELETE_BY = `DELETE FROM authorAffiliatedWith WHERE authorId = '${authorId}' AND affilId = '${affilId}'`;
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(DELETE_BY, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.send("successfully deleted authorAffiliatedWith relation");
+                }
+            });
+        }
+    });
+});
+
+/** ----------------------------------------------------------------------------------------------------------User Affiliated With-- **/
+app.get('/userAffiliatedWith', (req, res) => {
+    const { userId, affilId } = req.query;
+    var SELECT_USERAFFILWITH = "SELECT * from userAffiliatedWith ";
+    if (userId && !affilId) {
+        SELECT_USERAFFILWITH += `WHERE userId = ${userId}`;
+    }
+    else if (!userId && affilId) {
+        SELECT_USERAFFILWITH += `WHERE affilId = ${affilId}`;
+    }
+    else if (userId && affilId) {
+        SELECT_USERAFFILWITH += `WHERE userId = ${userId} AND affilId = ${affilId}`;
+    }
+    else {
+        SELECT_USERAFFILWITH = SELECT_ALL_USERAFFILWITH;
+    }
+
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(SELECT_USERAFFILWITH, (err, results) => {
                 if (err) {
                     connection.release();
                     return res.send(err);
                 } else {
                     connection.release();
                     return res.json({ data: results });
+                }
+            });
+        }
+    });
+});
+
+app.get('/userAffiliatedWith/add', (req, res) => {
+    const { userId, affilId } = req.query;
+    const INSERT_BY = `INSERT INTO userAffiliatedWith (userId, affilId)`
+        + `VALUES('${userId}', '${affilId}')`;
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(INSERT_BY, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.send("successfully added userAffiliatedWith relation");
+                }
+            });
+        }
+    });
+});
+
+app.get('/userAffiliatedWith/delete', (req, res) => {
+    const { userId, affilId } = req.query;
+    const DELETE_BY = `DELETE FROM userAffiliatedWith WHERE userId = '${userId}' AND affilId = '${affilId}'`;
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(DELETE_BY, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.send("successfully deleted userAffiliatedWith relation");
                 }
             });
         }
