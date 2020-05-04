@@ -364,8 +364,8 @@ app.get('/affiliations/update', (req, res) => {
         columns.push(name);
     }
     if (popular_topics) {
-        UPDATE_AFFIL = UPDATE_AFFIL + `pub_title = ?, `;
-        columns.push(pub_title);
+        UPDATE_AFFIL = UPDATE_AFFIL + `popular_topics = ?, `;
+        columns.push(popular_topics);
     }
 
     if (UPDATE_AFFIL.charAt(UPDATE_AFFIL.length - 2) == ',') {
@@ -389,6 +389,7 @@ app.get('/affiliations/update', (req, res) => {
         }
     });
 });
+
 /** ----------------------------------------------------------------------------------------------------------USERS-- **/
 app.get('/users', (req, res) => {
     pool.getConnection((err, connection) => {
@@ -402,6 +403,87 @@ app.get('/users', (req, res) => {
                 } else {
                     connection.release();
                     return res.json({ data: results });
+                }
+            });
+        }
+    });
+});
+
+app.get('/users/add', (req, res) => {
+    const { name, email, interests } = req.query;
+    const INSERT_USER = `INSERT INTO users (id, name, email, interests)`
+        + `VALUES(` + (current_user_id++) + `, '${name}', '${email}', '${interests}')`;
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(INSERT_USER, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.send("successfully added users");
+                }
+            });
+        }
+    });
+});
+
+app.get('/users/delete', (req, res) => {
+    const { id } = req.query;
+    const DELETE_USER = `DELETE FROM users WHERE id = '${id}'`;
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(DELETE_USER, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.send("successfully deleted users");
+                }
+            });
+        }
+    });
+});
+
+app.get('/users/update', (req, res) => {
+    const { id, name, email, interests } = req.query;
+    var UPDATE_USER = `UPDATE users `
+        + `SET `;
+    var columns = [];
+    if (name) {
+        UPDATE_USER = UPDATE_USER + `name=?, `;
+        columns.push(name);
+    }
+    if (email) {
+        UPDATE_USER = UPDATE_USER + `email = ?, `;
+        columns.push(email);
+    }
+    if (interests) {
+        UPDATE_USER = UPDATE_USER + `interests = ?, `;
+        columns.push(interests);
+    }
+
+    if (UPDATE_USER.charAt(UPDATE_USER.length - 2) == ',') {
+        UPDATE_USER = UPDATE_USER.substring(0, UPDATE_USER.length - 2);
+    }
+    UPDATE_USER = UPDATE_USER + `WHERE id = '${id}'`;
+
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(UPDATE_USER, columns, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.send("successfully updated users");
                 }
             });
         }
