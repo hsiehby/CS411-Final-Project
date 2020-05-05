@@ -1,5 +1,6 @@
 import React from 'react';
 import './styles_profile.scss';
+import heart_filled from "../../resources/love-and-romance_filled.svg";
 
 import { withRouter, Link } from 'react-router-dom';
 
@@ -27,6 +28,8 @@ class Profile extends React.Component {
         this.renderArticle = this.renderArticle.bind(this);
 
         this.handleEditInterests = this.handleEditInterests.bind(this);
+
+        this.handleLikeAuthor = this.handleLikeAuthor.bind(this);
     }
 
     componentDidMount() {
@@ -87,10 +90,30 @@ class Profile extends React.Component {
             .catch(err => console.error(err))
     }
 
+    /* HANDLE LIKE EDITS */
+    handleLikeAuthor(id) {
+        const { user } = this.state;
+        fetch(`http://localhost:3030/followedBy/delete?userId=${user.id}&authorId=${id}`)
+            .then(this.setState({ authors: [] }))
+            .then(this.getAuthors())
+            .catch(err => console.error(err));
+    }
+
+    handleLikeArticle(id) {
+        const { user } = this.state;
+        fetch(`http://localhost:3030/likedBy/delete?userId=${user.id}&articleId=${id}`)
+            .then(this.setState({ articles: [] }))
+            .then(this.getArticles())
+            .catch(err => console.error(err));
+    }
+
     /*--------------RENDER FUNCTIONS-----------------*/
     renderAuthor = ({ id, name, affiliation, email, interests, url_picture }) =>
         <div key={id}>
             <div className="author_item">
+                <div className="like">
+                    <img src={heart_filled} alt="liked" width="24" height="24" onClick={() => this.handleLikeAuthor(id)} />
+                </div>
                 <div className="author_id">
                     {id}
                 </div>
@@ -119,6 +142,9 @@ class Profile extends React.Component {
     renderAffil = ({ id, name, popular_topics }) =>
         <div key={id}>
             <div className="affil_item">
+                <div className="affil_id">
+                    {id}
+                </div>
                 <div className="affil_info">
                     <div className="affil_name">
                         {name}
@@ -127,15 +153,18 @@ class Profile extends React.Component {
                         {popular_topics}
                     </div>
                 </div>
-                <div className="affil_id">
-                    {id}
-                </div>
             </div>
         </div>
 
     renderArticle = ({ id, pub_title, pub_year, pub_publisher, pub_url }) =>
         <div key={id}>
             <div className="article_item">
+                <div className="like">
+                    <img src={heart_filled} alt="liked" width="24" height="24" onClick={() => this.handleLikeArticle(id)} />
+                </div>
+                <div className="article_id">
+                    {id}
+                </div>
                 <div className="article_info">
                     <div className="article_pub_title">
                         {pub_title}
@@ -152,9 +181,6 @@ class Profile extends React.Component {
                     <div className="article_pub_url">
                         {pub_url}
                     </div>
-                </div>
-                <div className="article_id">
-                    {id}
                 </div>
             </div>
         </div>
