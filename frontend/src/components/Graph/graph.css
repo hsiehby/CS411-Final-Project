@@ -1,0 +1,12 @@
+ 
+  #graph {
+    width: 80vw;
+    height: 60vh;
+    margin: auto;
+    background-color: #ffffff;
+    border: 1px solid black;
+  }
+  
+  .loadButton {
+    margin: 1em;
+  }
