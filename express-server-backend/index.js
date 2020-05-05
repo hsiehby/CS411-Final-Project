@@ -66,6 +66,26 @@ app.get('/authors', (req, res) => {
     });
 });
 
+app.get('/authors/:id', (req, res) => {
+    const { id } = req.params;
+    const FIND = `SELECT * FROM authors WHERE id=${id}`;
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(FIND, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.json({ data: results });
+                }
+            });
+        }
+    });
+});
+
 app.get('/authors/add', (req, res) => {
     const { name, affiliation, citedby, attributes, page, email, interests, url_picture } = req.query;
     const INSERT_AUTHOR = `INSERT INTO authors (id, name, affiliation, citedby, attributes, page, email, interests, url_picture)`
@@ -89,7 +109,7 @@ app.get('/authors/add', (req, res) => {
 
 app.get('/authors/delete', (req, res) => {
     const { id } = req.query;
-    const DELETE_AUTHOR = `DELETE FROM authors WHERE id = '${id}'`;
+    const DELETE_AUTHOR = `DELETE FROM authors WHERE id = ${id}`;
     pool.getConnection((err, connection) => {
         if (err) {
             return res.send(err);
@@ -185,6 +205,26 @@ app.get('/articles', (req, res) => {
     });
 });
 
+app.get('/articles/:id', (req, res) => {
+    const { id } = req.params;
+    const FIND = `SELECT * FROM articles WHERE id=${id}`;
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(FIND, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.json({ data: results });
+                }
+            });
+        }
+    });
+});
+
 app.get('/articles/add', (req, res) => {
     const { name, pub_title, eprint, pub_year, pub_publisher, pub_number, pub_author, journal, pub_url, citedby } = req.query;
     const INSERT_ARTICLE = `INSERT INTO articles (id, name, citedby, pub_title, pub_year, pub_author, eprint, pub_number, pub_publisher, pub_url, journal)`
@@ -208,7 +248,7 @@ app.get('/articles/add', (req, res) => {
 
 app.get('/articles/delete', (req, res) => {
     const { id } = req.query;
-    const DELETE_ARTICLE = `DELETE FROM articles WHERE id = '${id}'`;
+    const DELETE_ARTICLE = `DELETE FROM articles WHERE id = ${id}`;
     pool.getConnection((err, connection) => {
         if (err) {
             return res.send(err);
@@ -301,6 +341,26 @@ app.get('/affiliations', (req, res) => {
             return res.send(err);
         } else {
             connection.query(SELECT_ALL_AFFILS, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.json({ data: results });
+                }
+            });
+        }
+    });
+});
+
+app.get('/affiliations/:id', (req, res) => {
+    const { id } = req.params;
+    const FIND = `SELECT * FROM affiliations WHERE id=${id}`;
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(FIND, (err, results) => {
                 if (err) {
                     connection.release();
                     return res.send(err);
@@ -431,7 +491,7 @@ app.get('/users/login', (req, res) => {
 });
 
 app.get('/users/add', (req, res) => {
-    const { name, email, interests, password } = req.query;
+    const { name, email, interests, password, affiliation } = req.query;
     const INSERT_USER = `INSERT INTO users (id, name, email, interests, password)`
         + `VALUES(` + (current_user_id++) + `, '${name}', '${email}', '${interests}', '${password}')`;
     pool.getConnection((err, connection) => {
@@ -453,7 +513,7 @@ app.get('/users/add', (req, res) => {
 
 app.get('/users/delete', (req, res) => {
     const { id } = req.query;
-    const DELETE_USER = `DELETE FROM users WHERE id = '${id}'`;
+    const DELETE_USER = `DELETE FROM users WHERE id = ${id}`;
     pool.getConnection((err, connection) => {
         if (err) {
             return res.send(err);

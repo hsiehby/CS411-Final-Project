@@ -1,7 +1,7 @@
 import React from 'react';
 import './styles_home.scss';
 
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import Search from '../Search/index_search.js';
 
 class Home extends React.Component {
@@ -41,7 +41,6 @@ class Home extends React.Component {
         this.renderAuthor = this.renderAuthor.bind(this);
 
         this.handleSearchChange = this.handleSearchChange.bind(this);
-        
     }
 
     componentDidMount() {
@@ -147,6 +146,23 @@ class Home extends React.Component {
         const { authors, author, toDelete, update } = this.state;
         return (
             <div className="App">
+                <div className="navigation_buttons">
+                    <Link to={{
+                        pathname: '/home',
+                        state: this.state }}>
+                        <button>
+                            <span>Home</span>
+                        </button>
+                    </Link>
+                    <Link to={{
+                        pathname: '/profile',
+                        state: { user: this.state.user } }}>
+                        <button>
+                            <span>Profile</span>
+                        </button>
+                    </Link>
+                </div>
+
                 <div className="Search">
                     <Search onChange={this.handleSearchChange} />
                 </div>

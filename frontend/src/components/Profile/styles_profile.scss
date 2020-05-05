@@ -1,0 +1,77 @@
+.user_collection {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+}
+
+.user_all_info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    margin: 1rem;
+    padding: 1rem;
+    border: solid black 1px;
+}
+
+.user_info {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+}
+
+.user_name {
+    font-size: xx-large;
+    font-weight: bold;
+}
+
+.label {
+    font-size: large;
+}
+
+.user_authors {
+    flex: 1;
+}
+
+.user_articles {
+    flex: 1;
+}
+
+.user_affil {
+    flex: 1;
+}
+
+.list-articles {
+    padding: 1rem;
+    margin: 1rem;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+}
+
+.list-affils {
+    padding: 1rem;
+    margin: 1rem;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+}
+
+.affil_item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    box-sizing: border-box;
+}
+
+.article_item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    box-sizing: border-box;
+}
