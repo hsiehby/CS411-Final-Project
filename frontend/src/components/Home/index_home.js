@@ -1,6 +1,7 @@
 import React from 'react';
 import './styles_home.scss';
 
+import { withRouter } from 'react-router-dom';
 import Search from '../Search/index_search.js';
 
 class Home extends React.Component {
@@ -8,6 +9,7 @@ class Home extends React.Component {
         super(props);
         this.state = {
             authors: [],
+            user: this.props.location.state.user,
             author: {
                 name: "",
                 affiliation: "",
@@ -39,6 +41,7 @@ class Home extends React.Component {
         this.renderAuthor = this.renderAuthor.bind(this);
 
         this.handleSearchChange = this.handleSearchChange.bind(this);
+        
     }
 
     componentDidMount() {
@@ -248,4 +251,4 @@ class Home extends React.Component {
     }
 }
 
-export default Home;
+export default withRouter(Home);

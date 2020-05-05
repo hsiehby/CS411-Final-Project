@@ -431,9 +431,9 @@ app.get('/users/login', (req, res) => {
 });
 
 app.get('/users/add', (req, res) => {
-    const { name, email, interests } = req.query;
-    const INSERT_USER = `INSERT INTO users (id, name, email, interests)`
-        + `VALUES(` + (current_user_id++) + `, '${name}', '${email}', '${interests}')`;
+    const { name, email, interests, password } = req.query;
+    const INSERT_USER = `INSERT INTO users (id, name, email, interests, password)`
+        + `VALUES(` + (current_user_id++) + `, '${name}', '${email}', '${interests}', '${password}')`;
     pool.getConnection((err, connection) => {
         if (err) {
             return res.send(err);
@@ -444,7 +444,7 @@ app.get('/users/add', (req, res) => {
                     return res.send(err);
                 } else {
                     connection.release();
-                    return res.send("successfully added users");
+                    return res.json({ data: results, status_message: "successfully added users" });
                 }
             });
         }
@@ -472,7 +472,7 @@ app.get('/users/delete', (req, res) => {
 });
 
 app.get('/users/update', (req, res) => {
-    const { id, name, email, interests } = req.query;
+    const { id, name, email, interests, password } = req.query;
     var UPDATE_USER = `UPDATE users `
         + `SET `;
     var columns = [];
@@ -487,6 +487,10 @@ app.get('/users/update', (req, res) => {
     if (interests) {
         UPDATE_USER = UPDATE_USER + `interests = ?, `;
         columns.push(interests);
+    }
+    if (password) {
+        UPDATE_USER = UPDATE_USER + `password = ?, `;
+        columns.push(password);
     }
 
     if (UPDATE_USER.charAt(UPDATE_USER.length - 2) == ',') {

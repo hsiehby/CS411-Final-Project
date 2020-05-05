@@ -10,6 +10,8 @@ import {
 
 import Header from './components/Header/index_header.js';
 import Home from './components/Home/index_home.js';
+import Login from './components/LogIn/index_login.js';
+import Signup from './components/LogIn/index_signup.js';
 
 class App extends React.Component {
     constructor(props) {
@@ -22,8 +24,8 @@ class App extends React.Component {
             <Router className="routing-pane">
                 <div className="App">
                     <Header />
-
-                    <Link to="/">
+                    
+                    <Link to="/home">
                         <button>
                             <span>Home</span>
                         </button>
@@ -36,6 +38,16 @@ class App extends React.Component {
 
                     <Switch>
                         <Route exact path="/">
+                            <div>
+                                <Login />
+                            </div>
+                        </Route>
+                        <Route path="/signup">
+                            <div>
+                                <Signup />
+                            </div>
+                        </Route>
+                        <Route path="/home">
                             <div>
                                 <Home />
                             </div>
