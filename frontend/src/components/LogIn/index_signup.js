@@ -11,7 +11,13 @@ class Signup extends React.Component {
             email: "",
             password: "",
             interests: "",
-            user: {}
+            user: {
+                id: -1,
+                name: "",
+                email: "",
+                password: "",
+                interests: ""
+            }
         };
         this.attemptSignUp = this.attemptSignUp.bind(this);
         this.handleSignUp = this.handleSignUp.bind(this);
@@ -25,8 +31,10 @@ class Signup extends React.Component {
         } else {
             fetch(`http://localhost:3030/users/add?name=${name}&email=${email}&password=${password}&interests=${interests}`)
                 .then(response => response.json())
-                .then(response => this.setState({ user: response.data },
-                    () => { this.attemptSignUp() }))
+                .then(response => {
+                    this.setState({ user: response.data },
+                        () => { this.attemptSignUp() })
+                })
                 .catch(err => console.error(err));
         }
     }
@@ -52,6 +60,7 @@ class Signup extends React.Component {
                         value={email}
                         onChange={e => this.setState({ email: e.target.value })} />
                     <input
+                        type="password"
                         placeholder="password"
                         value={password}
                         onChange={e => this.setState({ password: e.target.value })} />

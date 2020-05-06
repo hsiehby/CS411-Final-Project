@@ -39,7 +39,7 @@ const FIND_AFFIL_TOP_CITED = "select authors.affiliation, authors.interests\n"
 var current_author_id = 10001;
 var current_article_id = 1569;
 var current_affiliation_id = 9999;
-var current_user_id = 9999;
+var current_user_id = 10005;
 
 const app = express();
 
@@ -522,9 +522,9 @@ app.get('/users/login', (req, res) => {
 });
 
 app.get('/users/add', (req, res) => {
-    const { name, email, interests, password, affiliation } = req.query;
+    const { name, email, interests, password } = req.query;
     const INSERT_USER = `INSERT INTO users (id, name, email, interests, password)`
-        + `VALUES(` + (current_user_id++) + `, '${name}', '${email}', '${interests}', '${password}')`;
+        + `VALUES(` + (current_user_id) + `, '${name}', '${email}', '${interests}', '${password}')`;
     pool.getConnection((err, connection) => {
         if (err) {
             return res.send(err);
@@ -535,7 +535,15 @@ app.get('/users/add', (req, res) => {
                     return res.send(err);
                 } else {
                     connection.release();
-                    return res.json({ data: results, status_message: "successfully added users" });
+                    return res.json({
+                        data: {
+                            id: (current_user_id++),
+                            name: name,
+                            email: email,
+                            interests: interests,
+                            password: password
+                        }
+                    });
                 }
             });
         }
@@ -600,6 +608,26 @@ app.get('/users/update', (req, res) => {
                 } else {
                     connection.release();
                     return res.send("successfully updated users");
+                }
+            });
+        }
+    });
+});
+
+app.get('/users/:id', (req, res) => {
+    const { id } = req.params;
+    const FIND = `SELECT * FROM users WHERE id=${id}`;
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(FIND, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.json({ data: results });
                 }
             });
         }
