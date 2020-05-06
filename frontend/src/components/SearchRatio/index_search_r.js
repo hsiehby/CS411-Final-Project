@@ -25,23 +25,26 @@ class SearchRatio extends React.Component {
 
     async getResults() {
         try {
-            await (await fetch('http://localhost:3030/authorRatio/')).json();
-            this.setState({ originalResults: [], results: [] });
+            let response = await (await fetch('http://localhost:3030/authorRatio/')).json();
+            this.setState({ originalResults: response.data[1], results: response.data[1] });
         } catch (e) {
             console.error(e);
         }
     }
 
     /*-------------------RENDER FUCNTIONS---------------------*/
-    renderResults = ({ affiliation, interests }) =>
-        <div key={(affiliation, interests)}>
+    renderResults = ({ name, total_citations, ratio_recent_citations }) =>
+        <div key={(name, ratio_recent_citations)}>
             <div className="results_item">
                 <div className="results_info">
-                    <div className="results_affil">
-                        {affiliation}
+                    <div className="results_name">
+                        {name}
                     </div>
-                    <div className="results_interests">
-                        {interests}
+                    <div className="results_total">
+                        Total Citations: {total_citations}
+                    </div>
+                    <div className="results_ratio">
+                        Ratio of Recent Citations: {ratio_recent_citations}
                     </div>
                 </div>
             </div>
@@ -50,7 +53,7 @@ class SearchRatio extends React.Component {
     /*------------------SEARCH FUNCTIONS----------------*/
     updateChange(value) {
         const filteredResults = this.state.originalResults.filter(result => (
-            result.interests.toLowerCase().includes(value.toLowerCase())
+            result.name.toLowerCase().includes(value.toLowerCase())
         ));
         this.setState({
             results: []

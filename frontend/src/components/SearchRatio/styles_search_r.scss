@@ -6,12 +6,17 @@
     flex-direction: column;
 }
 
-.results_affil {
+.results_name {
     font-size: medium;
     margin: 1rem;
 }
 
-.results_interests {
+.results_total {
+    font-size: small;
+    margin: 1rem;
+}
+
+.results_ratio {
     font-size: small;
     margin: 1rem;
 }

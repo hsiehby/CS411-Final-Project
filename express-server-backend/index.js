@@ -15,21 +15,19 @@ const SELECT_ALL_ARTICLEAFFILWITH = "SELECT * from articleAffiliatedWith ORDER B
 const SELECT_ALL_AUTHORAFFILWITH = "SELECT * from authorAffiliatedWith ORDER BY affilId limit 100";
 const SELECT_ALL_USERAFFILWITH = "SELECT * from userAffiliatedWith ORDER BY affilId limit 100";
 
-const SELECT_TEST = "SELECT * FROM authors WHERE name = 'sampleName'";
-
 const FIND_AUTHOR_RATIO = "SET @time_threshold = 2012;\n"
     + "SELECT total.name AS name, total.citations AS total_citations, (recent.citations / total.citations) AS ratio_recent_citations\n"
     + "FROM\n"
-    + "    ((SELECT DISTINCT name, count(citations) AS citations\n"
-    + "  FROM articles\n"
-    + "  GROUP BY name) total)\n"
+    + "  ((SELECT DISTINCT name, count(citations) AS citations\n"
+    + "      FROM articles\n"
+    + "      GROUP BY name) total\n"
     + "INNER JOIN\n"
-    + "   ((SELECT DISTINCT name, count(citations) AS citations\n"
-    + "     FROM articles\n"
+    + "   (SELECT DISTINCT name, count(citations) AS citations\n"
+    + "      FROM articles\n"
     + "      WHERE CAST(pub_year AS UNSIGNED) > @time_threshold\n"
-    + "GROUP BY name) recent)\n"
-    + "ON total.name = recent.name\n"
-    + "ORDER BY ratio_recent_citations DESC";
+    + "GROUP BY name) recent\n"
+    + "ON total.name = recent.name)\n"
+    +"ORDER BY ratio_recent_citations DESC";
 const FIND_AFFIL_TOP_CITED = "select authors.affiliation, authors.interests\n"
     + "from\n"
     + "(select articles.affiliation, max(articles.citedby) as num_cited\n"
@@ -59,6 +57,7 @@ const pool = mysql.createPool({
 
 const pool = mysql.createPool({
     connectionLimit: 100,
+    multipleStatements: true,
     waitForConnections: true,
     queueLimit: 0,
     host: "database-2.cehqpiyqjmwe.us-east-2.rds.amazonaws.com",
@@ -1162,72 +1161,12 @@ app.get('/affilTopCited', (req, res) => {
     });
 });
 
-app.get('/affilTopCited/:affil', (req, res) => {
-    const { affil } = req.params;
-    let FIND = "select authors.affiliation, authors.interests\n"
-        + "from\n"
-        + "(select articles.affiliation, max(articles.citedby) as num_cited\n"
-        + "from articles\n"
-        + `where articles.affiliation='${affil}' \n`
-        + "group by articles.affiliation) max_cited\n"
-        + "join authors\n"
-        + "on(authors.affiliation = max_cited.affiliation and max_cited.num_cited = authors.citedby)";
-    pool.getConnection((err, connection) => {
-        if (err) {
-            return res.send(err);
-        } else {
-            connection.query(FIND, (err, results) => {
-                if (err) {
-                    connection.release();
-                    return res.send(err);
-                } else {
-                    connection.release();
-                    return res.json({ data: results });
-                }
-            });
-        }
-    });
-});
-
 app.get('/authorRatio', (req, res) => {
     pool.getConnection((err, connection) => {
         if (err) {
             return res.send(err);
         } else {
             connection.query(FIND_AUTHOR_RATIO, (err, results) => {
-                if (err) {
-                    connection.release();
-                    return res.send(err);
-                } else {
-                    connection.release();
-                    return res.json({ data: results });
-                }
-            });
-        }
-    });
-});
-
-app.get('/authorRatio/:author', (req, res) => {
-    const FIND = "SET @time_threshold = 2012;\n"
-        + "SELECT total.name AS name, total.citations AS total_citations, (recent.citations / total.citations) AS ratio_recent_citations"
-        + "FROM\n"
-        + "    ((SELECT DISTINCT name, count(citations) AS citations\n"
-        + "        FROM articles\n"
-        + `        WHERE name='${author}'\n`
-        + "    GROUP BY name) total)\n"
-        + "INNER JOIN\n"
-        + "((SELECT DISTINCT name, count(citations) AS citations\n"
-        + "  FROM articles\n"
-        + `  WHERE name='${author}'\n`
-        + "  WHERE CAST(pub_year AS UNSIGNED) > @time_threshold\n"
-        + "GROUP BY name) recent)\n"
-        + "ON total.name = recent.name\n"
-        + "ORDER BY ratio_recent_citations DESC";
-    pool.getConnection((err, connection) => {
-        if (err) {
-            return res.send(err);
-        } else {
-            connection.query(FIND, (err, results) => {
                 if (err) {
                     connection.release();
                     return res.send(err);
