@@ -368,6 +368,14 @@ class Home extends React.Component {
                         </button>
                     </Link>
                     <Link to={{
+                        pathname: '/recommendations',
+                        state: { user: this.state.user }
+                    }}>
+                        <button>
+                            <span>Recommend</span>
+                        </button>
+                    </Link>
+                    <Link to={{
                         pathname: '/searchTopCited',
                         state: { user: this.state.user }
                     }}>

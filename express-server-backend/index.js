@@ -1206,3 +1206,26 @@ app.get('/authorRatio', (req, res) => {
         }
     });
 });
+
+/** ----------------------------------------------------------------------------------------------------------------------------OBJECTS **/
+/** ----------------------------------------------------------------------------------------------------------RECOMMENDATIONS-- **/
+app.get('/recommend/articles', (req, res) => {
+    const {userId} = req.query;
+    const CALL_RECOMMEND_ARTICLES = `CALL recommend_article(` + userId + `)`;
+    
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(CALL_RECOMMEND_ARTICLES, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.json({ data: results[0] });
+                }
+            });
+        }
+    });
+});
