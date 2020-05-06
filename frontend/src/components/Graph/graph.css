@@ -43,3 +43,20 @@
 }
 
 .dropdown:hover .dropdown-content {display: block;}
+
+.user-input {
+    display: flex;
+    flex-direction: row;
+    flex-wrap:nowrap;
+    align-items:flex-start;
+    justify-content:space-between;
+}
+
+.options {
+    display:flex;
+    flex-direction:column;
+    flex-wrap:nowrap;
+    width: 16.67%;
+    flex:1;
+    align-self:stretch;
+}
