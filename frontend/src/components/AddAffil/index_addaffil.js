@@ -1,7 +1,7 @@
 import React from 'react';
 import './styles_addaffil.scss';
 
-import { withRouter, Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import Search from '../Search/index_search.js';
 
 class AddAffil extends React.Component {
@@ -81,10 +81,35 @@ class AddAffil extends React.Component {
             </div>
         </div>
 
+    /*FILTERING FUNCTIONS*/
+    sortId(value, filtered) {
+        var sorted = filtered;
+        if (this.state.ascending) {
+            sorted = filtered.sort((a, b) => {
+                return a.id - b.id;
+            });
+        } else {
+            sorted = filtered.sort((a, b) => {
+                return b.id - a.id;
+            });
+        }
+
+        this.setState({
+            affils: sorted
+        });
+    }
+
+    updateChange(value) {
+        const filtered = this.state.affils.filter(affil => (
+            affil.name.toLowerCase().includes(value.toLowerCase())
+        ));
+        this.sortId(value, filtered);
+    }
+
     handleSearchChange(event) {
         const { value } = event.target;
         this.setState({ searchInput: value }, () => { console.log(this.state.searchInput) });
-        //TODO: need to do some form of filtering on this.state.authors
+        this.updateChange(value);
     }
 
     render() {
