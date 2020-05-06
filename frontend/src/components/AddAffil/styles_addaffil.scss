@@ -1,0 +1,19 @@
+.makeAffil {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.add_affiliation {
+    padding: 1rem;
+    margin-top: 1rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+}
+
+.searchAffil {
+    flex: 3;
+    flex-direction: column;
+}

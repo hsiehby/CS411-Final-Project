@@ -4,13 +4,16 @@ import './App.css';
 import {
     BrowserRouter as Router,
     Route,
-    Link,
     Switch
 } from 'react-router-dom'
 
 import Header from './components/Header/index_header.js';
 import Home from './components/Home/index_home.js';
 import Graph from './components/Graph/Graph.js';
+import Profile from './components/Profile/index_profile.js';
+import Login from './components/LogIn/index_login.js';
+import Signup from './components/LogIn/index_signup.js';
+import AddAffil from './components/AddAffil/index_addaffil.js';
 
 class App extends React.Component {
     constructor(props) {
@@ -24,16 +27,6 @@ class App extends React.Component {
                 <div className="App">
                     <Header />
 
-                    <Link to="/">
-                        <button>
-                            <span>Home</span>
-                        </button>
-                    </Link>
-                    <Link to="/profile">
-                        <button>
-                            <span>Profile</span>
-                        </button>
-                    </Link>
                     <Link to="/graph">
                         <button>
                             <span>Graph</span>
@@ -43,12 +36,27 @@ class App extends React.Component {
                     <Switch>
                         <Route exact path="/">
                             <div>
+                                <Login />
+                            </div>
+                        </Route>
+                        <Route path="/signup">
+                            <div>
+                                <Signup />
+                            </div>
+                        </Route>
+                        <Route path="/home">
+                            <div>
                                 <Home />
                             </div>
                         </Route>
                         <Route path="/profile">
                             <div>
-                                <span>TO DO</span>
+                                <Profile />
+                            </div>
+                        </Route>
+                        <Route path="/addAffiliation">
+                            <div>
+                                <AddAffil />
                             </div>
                         </Route>
                         <Route path="/graph">
@@ -56,8 +64,7 @@ class App extends React.Component {
                                 <Graph />
                             </div>
                         </Route>
-                    </Switch>
-                    
+                    </Switch>                    
                 </div>
             </Router>
         );

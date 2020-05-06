@@ -1,0 +1,129 @@
+.user_collection {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+}
+
+.user_all_info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    margin: 1rem;
+    padding: 1rem;
+    border: solid black 1px;
+}
+
+.user_info {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+}
+
+.user_name {
+    font-size: xx-large;
+    font-weight: bold;
+}
+
+.label {
+    font-size: large;
+}
+
+.user_authors {
+    flex: 1;
+}
+
+.user_articles {
+    flex: 1;
+}
+
+.user_affil {
+    flex: 1;
+}
+
+.list-articles {
+    padding: 1rem;
+    margin: 1rem;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+}
+
+.list-affils {
+    padding: 1rem;
+    margin: 1rem;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+}
+
+.affil_item {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    box-sizing: border-box;
+}
+
+.affil_id {
+    flex: 1;
+}
+
+.affil_info {
+    display: flex;
+    flex: 4;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: 0.5rem;
+    text-align: right;
+}
+
+.article_item {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    flex-basis: 20%;
+    padding: 0.5rem 0.75rem;
+    box-sizing: border-box;
+}
+
+.article_id {
+    flex: 1;
+}
+
+.article_info {
+    display: flex;
+    flex: 5;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: 0.5rem;
+    text-align: right;
+}
+
+.author_item {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    flex-basis: 20%;
+    padding: 0.5rem 0.75rem;
+    box-sizing: border-box;
+}
+
+.like {
+    flex: 1;
+}
+
+.author_id {
+    display: flex;
+    flex: 1;
+}
+
+.author_image {
+    width: 200px;
+    height: 200px;
+    flex: 2;
+}

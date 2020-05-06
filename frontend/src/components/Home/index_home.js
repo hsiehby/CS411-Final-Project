@@ -1,124 +1,176 @@
 import React from 'react';
 import './styles_home.scss';
+import heart_filled from "../../resources/love-and-romance_filled.svg";
+import heart_empty from "../../resources/love-and-romance_empty.svg";
 
+import { withRouter, Link } from 'react-router-dom';
 import Search from '../Search/index_search.js';
 
 class Home extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            originalAuthors: [],
+            originalArticles: [],
+            originalAffils: [],
             authors: [],
-            author: {
-                name: "",
-                affiliation: "",
-                citedby: "",
-                attributes: "",
-                page: 0,
-                email: "",
-                interests: "",
-                url_picture: ""
-            },
-            toDelete: -1,
-            update: {
-                id: -1,
-                name: "",
-                affiliation: "",
-                citedby: "",
-                attributes: "",
-                page: -1,
-                email: "",
-                interests: "",
-                url_picture: ""
-            },
+            articles: [],
+            affils: [],
+            user: this.props.location.state.user,
             searchInput: ""
         }
         this.getAuthors = this.getAuthors.bind(this);
-        this.addAuthor = this.addAuthor.bind(this);
-        this.deleteAuthor = this.deleteAuthor.bind(this);
-        this.updateAuthor = this.updateAuthor.bind(this);
+        this.getAffils = this.getAffils.bind(this);
+        this.getArticles = this.getArticles.bind(this);
+
         this.renderAuthor = this.renderAuthor.bind(this);
+        this.renderAffil = this.renderAffil.bind(this);
+        this.renderArticle = this.renderArticle.bind(this);
 
         this.handleSearchChange = this.handleSearchChange.bind(this);
     }
 
     componentDidMount() {
         this.getAuthors();
+        this.getArticles();
+        this.getAffils();
+        this.sortId(this.state.affils, this.state.authors, this.state.articles);
     }
 
-    getAuthors = _ => {
-        fetch('http://localhost:3030/authors/')
-            .then(response => response.json())
-            .then(response => this.setState({ authors: response.data }))
-            .catch(err => console.error(err))
+    async getAuthors() {
+        try {
+            let response = await (await fetch('http://localhost:3030/authors/')).json();
+            for (var i = 0; i < response.data.length; i++) {
+                this.fetchFollowedBy(response.data[i]);
+            }
+            this.setState({ authors: this.state.originalAuthors });
+        } catch (e) {
+            console.error(e);
+        }
+    }
+    
+    async getAffils() {
+        try {
+            let response = await (await fetch('http://localhost:3030/affiliations/')).json();
+            for (var i = 0; i < response.data.length; i++) {
+                this.fetchAffiliatedWith(response.data[i]);
+            }
+            this.setState({ affils: this.state.originalAffils });
+        } catch (e) {
+            console.error(e);
+        }
     }
 
-    addAuthor = _ => {
-        const { author } = this.state;
-        fetch(`http://localhost:3030/authors/add?`
-            + `name=${author.name}`
-            + `&affiliation=${author.affiliation}`
-            + `&citedby=${author.citedby}`
-            + `&attributes=${author.attributes}`
-            + `&page=${author.page}`
-            + `&email=${author.email}`
-            + `&interests=${author.interests}`
-            + `&url_picture=${author.url_picture}`)
-            .then(this.getAuthors)
-            .catch(err => console.error(err))
+    async getArticles() {
+        try {
+            let response = await (await fetch('http://localhost:3030/articles/')).json();
+            for (var i = 0; i < response.data.length; i++) {
+                this.fetchLikedBy(response.data[i]);
+            }
+            this.setState({ articles: this.state.originalArticles });
+        } catch (e) {
+            console.error(e);
+        }
     }
 
-    deleteAuthor = _ => {
-        const { toDelete } = this.state;
-        fetch(`http://localhost:3030/authors/delete?id=${toDelete}`)
-            .then(this.getAuthors)
-            .catch(err => console.error(err))
+    fetchFollowedBy(author) {
+        const { user } = this.state;
+        try {
+            fetch(`http://localhost:3030/followedBy?userId=${user.id}&authorId=${author.id}`)
+                .then(response => response.json())
+                .then(response => {
+                    let newOrigAuthors = this.state.originalAuthors;
+                    if (response.data.length > 0) {
+                        newOrigAuthors.push({
+                            ...author,
+                            like: heart_filled
+                        });
+                    } else {
+                        newOrigAuthors.push({
+                            ...author,
+                            like: heart_empty
+                        });
+                    }
+                    this.setState({
+                        originalAuthors: newOrigAuthors
+                    });
+                });
+        } catch (e) {
+            console.error(e);
+        }
     }
 
-    updateAuthor = _ => {
-        const { update } = this.state;
-        var UPDATE_AUTHOR = `http://localhost:3030/authors/update?id=${update.id}`;
-        if (update.name !== "") {
-            UPDATE_AUTHOR = UPDATE_AUTHOR + `&name=${update.name}`;
+    fetchAffiliatedWith(affil) {
+        const { user } = this.state;
+        try {
+            fetch(`http://localhost:3030/userAffiliatedWith?userId=${user.id}&affilId=${affil.id}`)
+                .then(response => response.json())
+                .then(response => {
+                    let newOrigAffils = this.state.originalAffils;
+                    if (response.data.length > 0) {
+                        newOrigAffils.push({
+                            ...affil,
+                            like: heart_filled
+                        });
+                    } else {
+                        newOrigAffils.push({
+                            ...affil,
+                            like: heart_empty
+                        });
+                    }
+                    this.setState({
+                        originalAffils: newOrigAffils
+                    });
+                });
+        } catch (e) {
+            console.error(e);
         }
-        if (update.affiliation !== "") {
-            UPDATE_AUTHOR = UPDATE_AUTHOR + `&affiliation=${update.affiliation}`;
-        }
-        if (update.citedby !== "") {
-            UPDATE_AUTHOR = UPDATE_AUTHOR + `&citedby=${update.citedby}`;
-        }
-        if (update.attributes !== "") {
-            UPDATE_AUTHOR = UPDATE_AUTHOR + `&attributes=${update.attributes}`;
-        }
-        if (update.page !== -1) {
-            UPDATE_AUTHOR = UPDATE_AUTHOR + `&page=${update.page}`;
-        }
-        if (update.email !== "") {
-            UPDATE_AUTHOR = UPDATE_AUTHOR + `&email=${update.email}`;
-        }
-        if (update.interests !== "") {
-            UPDATE_AUTHOR = UPDATE_AUTHOR + `&interests=${update.interests}`;
-        }
-        if (update.url_picture !== "") {
-            UPDATE_AUTHOR = UPDATE_AUTHOR + `&url_picture=${update.url_picture}`;
-        }
-        fetch(UPDATE_AUTHOR)
-            .then(this.getAuthors)
-            .catch(err => console.error(err))
     }
 
-    renderAuthor = ({ id, name, affiliation, email, interests, url_picture }) =>
-        <div key={id}>
-            <div className = "author_item">
+    fetchLikedBy(article) {
+        const { user } = this.state;
+        try {
+            fetch(`http://localhost:3030/likedBy?userId=${user.id}&articleId=${article.id}`)
+                .then(response => response.json())
+                .then(response => {
+                    let newOrigArticles = this.state.originalArticles;
+                    if (response.data.length > 0) {
+                        newOrigArticles.push({
+                            ...article,
+                            like: heart_filled
+                        });
+                    } else {
+                        newOrigArticles.push({
+                            ...article,
+                            like: heart_empty
+                        });
+                    }
+                    this.setState({
+                        originalArticles: newOrigArticles
+                    });
+                });
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    /*-------------------RENDER FUCNTIONS---------------------*/
+    renderAuthor = ({ id, name, affiliation, email, interests, url_picture, like }) =>
+        <div key={(id, name)}>
+            <div className="author_item">
+                <div className="like">
+                    <img src={like} alt="liked" width="24" height="24" onClick={() => this.handleLikeAuthor(id, like)} />
+                </div>
                 <div className="author_id">
                     {id}
                 </div>
                 <div>
-                    <img className = "author_image"
+                    <img className="author_image"
                         src={url_picture}
                         alt={"image of " + name} />
                 </div>
-                <div className = "author_info">
-                    <div className = "author_name">
+                <div className="author_info">
+                    <div className="author_name">
                         {name}
                     </div>
                     <div className="author_affiliation">
@@ -134,113 +186,208 @@ class Home extends React.Component {
             </div>
         </div>
 
+    renderAffil = ({ id, name, popular_topics, like }) =>
+        <div key={(id, name)}>
+            <div className="affil_item">
+                <div className="like">
+                    <img src={like} alt="liked" width="24" height="24" onClick={() => this.handleLikeAffil(id, like)} />
+                </div>
+                <div className="affil_id">
+                    {id}
+                </div>
+                <div className="affil_info">
+                    <div className="affil_name">
+                        {name}
+                    </div>
+                    <div className="affil_popular_topics">
+                        {popular_topics}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    renderArticle = ({ id, pub_title, pub_year, pub_publisher, like}) =>
+        <div key={(id, pub_title)}>
+            <div className="article_item">
+                <div className="like">
+                    <img src={like} alt="liked" width="24" height="24" onClick={() => this.handleLikeArticle(id, like)} />
+                </div>
+                <div className="article_id">
+                    {id}
+                </div>
+                <div className="article_info">
+                    <div className="article_pub_title">
+                        {pub_title}
+                    </div>
+                    <div className="article_pub_publisher">
+                        {pub_publisher}
+                    </div>
+                    <div className="article_pub_publisher">
+                        {pub_publisher}
+                    </div>
+                    <div className="article_pub_year">
+                        {pub_year}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    /*------------------LIKE FUNCTIONS----------------*/
+    async handleLikeAuthor(id, like) {
+        const { user } = this.state;
+        try {
+            if (like === heart_filled) {
+                await fetch(`http://localhost:3030/followedBy/delete?userId=${user.id}&authorId=${id}`);
+            } else {
+                await fetch(`http://localhost:3030/followedBy/add?userId=${user.id}&authorId=${id}`);
+            }
+            this.setState({ originalAuthors: [], authors: [] }, () => { this.getAuthors(); this.sortAuthors(this.state.authors); });
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    async handleLikeAffil(id, like) {
+        const { user } = this.state;
+        try {
+            if (like === heart_filled) {
+                await fetch(`http://localhost:3030/userAffiliatedWith/delete?userId=${user.id}&affilId=${id}`);
+            } else {
+                await fetch(`http://localhost:3030/userAffiliatedWith/add?userId=${user.id}&affilId=${id}`);
+            }
+            this.setState({ originalAffils: [], affils: [] }, () => { this.getAffils(); this.sortAffil(this.state.authors); });
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    async handleLikeArticle(id, like) {
+        const { user } = this.state;
+        try {
+            if (like === heart_filled) {
+                await fetch(`http://localhost:3030/likedBy/delete?userId=${user.id}&articleId=${id}`);
+            } else {
+                await fetch(`http://localhost:3030/likedBy/add?userId=${user.id}&articleId=${id}`);
+            }
+            this.setState({ originalArticles: [], articles: [] }, () => { this.getArticles(); this.sortArticles(this.state.articles); });
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    /*------------------SEARCH FUNCTIONS----------------*/
+    sortAffil(filteredAffil) {
+        var sortedAffil = filteredAffil;
+        sortedAffil = filteredAffil.sort((a, b) => {
+            console.log(a.id + " " + b.id);
+            return a.id - b.id;
+        });
+        this.setState({
+            affils: []
+        }, () => {
+            this.setState({
+                affils: sortedAffil
+            });
+        }
+        );
+    }
+
+    sortAuthors(filteredAuthors) {
+        var sortedAuthors = filteredAuthors;
+        sortedAuthors = filteredAuthors.sort((a, b) => {
+            return a.id - b.id;
+        });
+        this.setState({
+            authors: []
+        }, () => {
+            this.setState({
+                authors: sortedAuthors
+            });
+        }
+        );
+    }
+
+    sortArticles(filteredArticles) {
+        var sortedArticles = filteredArticles;
+        sortedArticles = filteredArticles.sort((a, b) => {
+            return a.id - b.id;
+        });
+        this.setState({
+            articles: []
+        }, () => {
+            this.setState({
+                articles: sortedArticles
+            });
+        }
+        );
+    }
+
+    sortId(filteredAffil, filteredAuthors, filteredArticles) {
+        this.sortAffil(filteredAffil);
+        this.sortAuthors(filteredAuthors);
+        this.sortArticles(filteredArticles);
+    }
+
+    updateChange(value) {
+        const filteredAffil = this.state.originalAffils.filter(affil => (
+            affil.name.toLowerCase().includes(value.toLowerCase())
+        ));
+        const filteredAuthors = this.state.originalAuthors.filter(author => (
+            author.name.toLowerCase().includes(value.toLowerCase())
+        ));
+        const filteredArticles = this.state.originalArticles.filter(article => (
+            article.name.toLowerCase().includes(value.toLowerCase())
+        ));
+        this.sortId(filteredAffil, filteredAuthors, filteredArticles);
+    }
+
     handleSearchChange(event) {
         const { value } = event.target;
         this.setState({ searchInput: value });
-        //TODO: need to do some form of filtering on this.state.authors
+        this.updateChange(value);
     }
 
     render() {
-        const { authors, author, toDelete, update } = this.state;
+        const { authors, articles, affils } = this.state;
         return (
-            <div className="App">
-                <div className="Search">
-                    <Search onChange={this.handleSearchChange} />
+            <div className="container">
+                <div className="navigation_buttons">
+                    <Link to={{
+                        pathname: '/home',
+                        state: this.state
+                    }}>
+                        <button>
+                            <span>Home</span>
+                        </button>
+                    </Link>
+                    <Link to={{
+                        pathname: '/profile',
+                        state: { user: this.state.user }
+                    }}>
+                        <button>
+                            <span>Profile</span>
+                        </button>
+                    </Link>
                 </div>
 
-                <div className = "container">
-                    <div className = "edit_authors">
-                        <div className="add_author">
-                            <button onClick={this.addAuthor}>Add Author</button>
-                            <input
-                                placeholder="name"
-                                value={author.name}
-                                onChange={e => this.setState({ author: { ...author, name: e.target.value } })} />
-                            <input
-                                placeholder="affiliation"
-                                value={author.affiliation}
-                                onChange={e => this.setState({ author: { ...author, affiliation: e.target.value } })} />
-                            <input
-                                placeholder="citedby"
-                                value={author.citedby}
-                                onChange={e => this.setState({ author: { ...author, citedby: e.target.value } })} />
-                            <input
-                                placeholder="attributes"
-                                value={author.attributes}
-                                onChange={e => this.setState({ author: { ...author, attributes: e.target.value } })} />
-                            <input
-                                placeholder="page"
-                                type="number"
-                                value={author.page}
-                                onChange={e => this.setState({ author: { ...author, page: e.target.value } })} />
-                            <input
-                                placeholder="email"
-                                value={author.email}
-                                onChange={e => this.setState({ author: { ...author, email: e.target.value } })} />
-                            <input
-                                placeholder="interests"
-                                value={author.interests}
-                                onChange={e => this.setState({ author: { ...author, interests: e.target.value } })} />
-                            <input
-                                placeholder="url_picture"
-                                value={author.url_picture}
-                                onChange={e => this.setState({ author: { ...author, url_picture: e.target.value } })} />
-                        </div>
-
-                        <div className="delete_author">
-                            <button onClick={this.deleteAuthor}>Delete Author</button>
-                            <input
-                                type="number"
-                                placeholder="id to Delete"
-                                value={toDelete}
-                                onChange={e => this.setState({ toDelete: e.target.value })} />
-                        </div>
-
-                        <div className="update_author">
-                            <button onClick={this.updateAuthor}>Update Author</button>
-                            <input
-                                type="number"
-                                placeholder="id to Update"
-                                value={update.id}
-                                onChange={e => this.setState({ update: { ...update, id: e.target.value } })} />
-                            <input
-                                placeholder="name"
-                                value={update.name}
-                                onChange={e => this.setState({ update: { ...update, name: e.target.value } })} />
-                            <input
-                                placeholder="affiliation"
-                                value={update.affiliation}
-                                onChange={e => this.setState({ update: { ...update, affiliation: e.target.value } })} />
-                            <input
-                                placeholder="citedby"
-                                value={update.citedby}
-                                onChange={e => this.setState({ update: { ...update, citedby: e.target.value } })} />
-                            <input
-                                placeholder="attributes"
-                                value={update.attributes}
-                                onChange={e => this.setState({ update: { ...update, attributes: e.target.value } })} />
-                            <input
-                                placeholder="page"
-                                type="number"
-                                value={update.page}
-                                onChange={e => this.setState({ update: { ...update, page: e.target.value } })} />
-                            <input
-                                placeholder="email"
-                                value={update.email}
-                                onChange={e => this.setState({ update: { ...update, email: e.target.value } })} />
-                            <input
-                                placeholder="interests"
-                                value={update.interests}
-                                onChange={e => this.setState({ update: { ...update, interests: e.target.value } })} />
-                            <input
-                                placeholder="url_picture"
-                                value={update.url_picture}
-                                onChange={e => this.setState({ update: { ...update, url_picture: e.target.value } })} />
-                        </div>
+                <div className="Search">
+                    <Search onChange={e => { this.handleSearchChange(e) }} />
+                </div>
+                
+                <div className="home_collection">
+                    <div className="home_authors">
+                        <div className="label"> Authors: </div>
+                        <div className="list-authors"> {authors.map(this.renderAuthor)}</div>
                     </div>
-
-                    <div className="display_results">
-                        {authors.map(this.renderAuthor)}
+                    <div className="home_articles">
+                        <div className="label"> Articles: </div>
+                        <div className="list-articles"> {articles.map(this.renderArticle)} </div>
+                    </div>
+                    <div className="home_affil">
+                        <div className="label">
+                            Affiliations:
+                            </div>
+                        <div className="list-affils"> {affils.map(this.renderAffil)}</div>
                     </div>
                 </div>
             </div>
@@ -248,4 +395,4 @@ class Home extends React.Component {
     }
 }
 
-export default Home;
+export default withRouter(Home);
