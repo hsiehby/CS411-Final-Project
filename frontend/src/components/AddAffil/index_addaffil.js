@@ -53,7 +53,14 @@ class AddAffil extends React.Component {
     async updateAffil() {
         const { toUpdate, user } = this.state;
         try {
-            await fetch(`http://localhost:3030/affiliations/update?id=${toUpdate.id}&name='${toUpdate.name}'&popular_topics='${toUpdate.popular_topics}'`);
+            let URL = `http://localhost:3030/affiliations/update?id=${toUpdate.id}`;
+            if (toUpdate.name !== "") {
+                URL += `&name='${toUpdate.name}'`;
+            }
+            if (toUpdate.popular_topics !== "") {
+                URL += `&popular_topics='${toUpdate.popular_topics}'`;
+            }
+            await fetch(URL);
             this.props.history.push({
                 pathname: '/profile',
                 state: { user: user }

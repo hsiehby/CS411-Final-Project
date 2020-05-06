@@ -375,6 +375,14 @@ class Home extends React.Component {
                             <span>Search: Match Interests</span>
                         </button>
                     </Link>
+                    <Link to={{
+                        pathname: '/searchRatio',
+                        state: { user: this.state.user }
+                    }}>
+                        <button>
+                            <span>Search: Author Ratios </span>
+                        </button>
+                    </Link>
                 </div>
 
                 <div className="Search">

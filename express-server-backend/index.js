@@ -18,25 +18,25 @@ const SELECT_ALL_USERAFFILWITH = "SELECT * from userAffiliatedWith ORDER BY affi
 const SELECT_TEST = "SELECT * FROM authors WHERE name = 'sampleName'";
 
 const FIND_AUTHOR_RATIO = "SET @time_threshold = 2012;\n"
-    +"SELECT total.name AS name, total.citations AS total_citations, (recent.citations / total.citations) AS ratio_recent_citations"
+    + "SELECT total.name AS name, total.citations AS total_citations, (recent.citations / total.citations) AS ratio_recent_citations\n"
     + "FROM\n"
     + "    ((SELECT DISTINCT name, count(citations) AS citations\n"
-    +"        FROM articles\n"
-    + "    GROUP BY name) total)\n"
-    + "INNER JOIN\n"
-    + "((SELECT DISTINCT name, count(citations) AS citations\n"
     + "  FROM articles\n"
-    + "  WHERE CAST(pub_year AS UNSIGNED) > @time_threshold\n"
+    + "  GROUP BY name) total)\n"
+    + "INNER JOIN\n"
+    + "   ((SELECT DISTINCT name, count(citations) AS citations\n"
+    + "     FROM articles\n"
+    + "      WHERE CAST(pub_year AS UNSIGNED) > @time_threshold\n"
     + "GROUP BY name) recent)\n"
     + "ON total.name = recent.name\n"
-    +"ORDER BY ratio_recent_citations DESC";
+    + "ORDER BY ratio_recent_citations DESC";
 const FIND_AFFIL_TOP_CITED = "select authors.affiliation, authors.interests\n"
-    +"from\n"
-    +"(select articles.affiliation, max(articles.citedby) as num_cited\n"
-    +"from articles\n"
-    +"group by articles.affiliation) max_cited\n"
-    +"join authors\n"
-    +"on(authors.affiliation = max_cited.affiliation and max_cited.num_cited = authors.citedby)";
+    + "from\n"
+    + "(select articles.affiliation, max(articles.citedby) as num_cited\n"
+    + "from articles\n"
+    + "group by articles.affiliation) max_cited\n"
+    + "join authors\n"
+    + "on(authors.affiliation = max_cited.affiliation and max_cited.num_cited = authors.citedby)";
 
 var current_author_id = 10001;
 var current_article_id = 1569;

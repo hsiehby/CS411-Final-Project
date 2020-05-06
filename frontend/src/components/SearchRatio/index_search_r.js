@@ -1,10 +1,10 @@
 import React from 'react';
-import './styles_search_tc.scss';
+import './styles_search_r.scss';
 
 import { withRouter, Link } from 'react-router-dom';
 import Search from '../Search/index_search.js';
 
-class SearchTopCited extends React.Component {
+class SearchRatio extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -25,8 +25,8 @@ class SearchTopCited extends React.Component {
 
     async getResults() {
         try {
-            let response = await (await fetch('http://localhost:3030/affilTopCited/')).json();
-            this.setState({ originalResults: response.data, results: response.data });
+            await (await fetch('http://localhost:3030/authorRatio/')).json();
+            this.setState({ originalResults: [], results: [] });
         } catch (e) {
             console.error(e);
         }
@@ -119,4 +119,4 @@ class SearchTopCited extends React.Component {
     }
 }
 
-export default withRouter(SearchTopCited);
+export default withRouter(SearchRatio);

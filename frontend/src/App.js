@@ -14,6 +14,7 @@ import Login from './components/LogIn/index_login.js';
 import Signup from './components/LogIn/index_signup.js';
 import AddAffil from './components/AddAffil/index_addaffil.js';
 import SearchTopCited from './components/SearchTopCited/index_search_tc.js';
+import SearchRatio from './components/SearchRatio/index_search_r.js';
 
 class App extends React.Component {
     constructor(props) {
@@ -55,6 +56,11 @@ class App extends React.Component {
                         <Route path="/searchTopCited">
                             <div>
                                 <SearchTopCited />
+                            </div>
+                        </Route>
+                        <Route path="/searchRatio">
+                            <div>
+                                <SearchRatio />
                             </div>
                         </Route>
                     </Switch>
