@@ -4,7 +4,8 @@ import './App.css';
 import {
     BrowserRouter as Router,
     Route,
-    Switch
+    Switch,
+    Link
 } from 'react-router-dom'
 
 import Header from './components/Header/index_header.js';
