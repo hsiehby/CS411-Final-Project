@@ -1,41 +1,51 @@
-.container {
-    padding: 1rem;
+.home_collection {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: space-around;
 }
 
-.display_results {
-    padding: 1rem;
-    display: flex;
-    flex: 2;
+.home_authors {
     flex-direction: column;
-    flex-wrap: nowrap;
-}
-
-.edit_authors {
-    padding: 1rem;
-    display: flex;
     flex: 1;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
 }
 
-.add_author {
+.home_articles {
+    flex-direction: column;
+    flex: 1;
+}
+
+.home_affil {
+    flex-direction: column;
+    flex:1;
+}
+
+.label {
+    font-size: large;
+}
+
+.list-authors {
+    padding: 1rem;
+    margin: 1rem;
+    text-align: right;
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
 }
 
-.delete_author {
+.list-articles {
+    padding: 1rem;
+    margin: 1rem;
+    text-align: right;
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
 }
 
-.update_author {
+.list-affils {
+    padding: 1rem;
+    margin: 1rem;
+    text-align: right;
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
@@ -44,9 +54,8 @@
 .author_item {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: flex-start;
     align-items: center;
-    flex-basis: 20%;
     padding: 0.5rem 0.75rem;
     box-sizing: border-box;
 }
@@ -57,12 +66,56 @@
 }
 
 .author_image {
-    width: 200px;
-    height: 200px;
+    width: 50px;
+    height: 50px;
     flex: 2;
 }
 
 .author_info {
+    display: flex;
+    flex: 5;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: 0.5rem;
+    text-align: right;
+}
+
+.article_item {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    box-sizing: border-box;
+}
+
+.article_id {
+    flex: 1;
+}
+
+.article_info {
+    display: flex;
+    flex: 5;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: 0.5rem;
+    text-align: right;
+}
+
+.affil_item {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    box-sizing: border-box;
+}
+
+.affil_id {
+    flex: 1;
+}
+
+.affil_info {
     display: flex;
     flex: 4;
     flex-direction: column;

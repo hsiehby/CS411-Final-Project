@@ -2,9 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql');
 
-const SELECT_ALL_AUTHORS = "SELECT * from authors ORDER BY id limit 100";
-const SELECT_ALL_ARTICLES = "SELECT * from articles ORDER BY id limit 100";
-const SELECT_ALL_AFFILS = "SELECT * from affiliations ORDER BY id limit 1000";
+const SELECT_ALL_AUTHORS = "SELECT * from authors ORDER BY id limit 200";
+const SELECT_ALL_ARTICLES = "SELECT * from articles ORDER BY id limit 200";
+const SELECT_ALL_AFFILS = "SELECT * from affiliations ORDER BY id limit 200";
 const SELECT_ALL_USERS = "SELECT * from users ORDER BY id limit 100";
 
 const SELECT_ALL_AUTHOREDBY = "SELECT * from authoredBy ORDER BY articleId limit 100";

@@ -90,7 +90,7 @@ class Profile extends React.Component {
             .catch(err => console.error(err))
     }
 
-    /* HANDLE LIKE EDITS */
+    /*-------------------- HANDLE LIKE EDITS -------------------*/
     handleLikeAuthor(id) {
         const { user } = this.state;
         fetch(`http://localhost:3030/followedBy/delete?userId=${user.id}&authorId=${id}`)
@@ -197,7 +197,7 @@ class Profile extends React.Component {
             </div>
         </div>
 
-    /* USER INTERESTS UPDATE */
+    /*----------------- USER INTERESTS UPDATE ---------------------*/
     handleEditInterests = _ => {
         const { user, updated_interests } = this.state;
         fetch(`http://localhost:3030/users/update?id=${user.id}&interests='${updated_interests}'`)
