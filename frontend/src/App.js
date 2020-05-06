@@ -10,6 +10,7 @@ import {
 
 import Header from './components/Header/index_header.js';
 import Home from './components/Home/index_home.js';
+import Graph from './components/Graph/Graph.js';
 
 class App extends React.Component {
     constructor(props) {
@@ -33,6 +34,11 @@ class App extends React.Component {
                             <span>Profile</span>
                         </button>
                     </Link>
+                    <Link to="/graph">
+                        <button>
+                            <span>Graph</span>
+                        </button>
+                    </Link>
 
                     <Switch>
                         <Route exact path="/">
@@ -43,6 +49,11 @@ class App extends React.Component {
                         <Route path="/profile">
                             <div>
                                 <span>TO DO</span>
+                            </div>
+                        </Route>
+                        <Route path="/graph">
+                            <div>
+                                <Graph />
                             </div>
                         </Route>
                     </Switch>
