@@ -48,7 +48,7 @@ class Home extends React.Component {
             console.error(e);
         }
     }
-    
+
     async getAffils() {
         try {
             let response = await (await fetch('http://localhost:3030/affiliations/')).json();
@@ -206,7 +206,7 @@ class Home extends React.Component {
             </div>
         </div>
 
-    renderArticle = ({ id, pub_title, pub_year, pub_publisher, like}) =>
+    renderArticle = ({ id, pub_title, pub_year, pub_publisher, like }) =>
         <div key={(id, pub_title)}>
             <div className="article_item">
                 <div className="like">
@@ -279,7 +279,6 @@ class Home extends React.Component {
     sortAffil(filteredAffil) {
         var sortedAffil = filteredAffil;
         sortedAffil = filteredAffil.sort((a, b) => {
-            console.log(a.id + " " + b.id);
             return a.id - b.id;
         });
         this.setState({
@@ -346,7 +345,7 @@ class Home extends React.Component {
         this.setState({ searchInput: value });
         this.updateChange(value);
     }
-
+    
     render() {
         const { authors, articles, affils } = this.state;
         return (
@@ -368,12 +367,20 @@ class Home extends React.Component {
                             <span>Profile</span>
                         </button>
                     </Link>
+                    <Link to={{
+                        pathname: '/searchTopCited',
+                        state: { user: this.state.user }
+                    }}>
+                        <button>
+                            <span>Search: Match Interests</span>
+                        </button>
+                    </Link>
                 </div>
 
                 <div className="Search">
                     <Search onChange={e => { this.handleSearchChange(e) }} />
                 </div>
-                
+
                 <div className="home_collection">
                     <div className="home_authors">
                         <div className="label"> Authors: </div>

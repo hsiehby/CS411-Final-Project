@@ -15,6 +15,12 @@ class AddAffil extends React.Component {
                 name: "",
                 popular_topics: ""
             },
+            toDelete: -1,
+            toUpdate: {
+                id: -1,
+                name: "",
+                popular_topics: ""
+            },
             searchInput: ""
         }
     }
@@ -28,6 +34,33 @@ class AddAffil extends React.Component {
             .then(response => response.json())
             .then(response => this.setState({ affils: response.data }))
             .catch(err => console.error(err))
+    }
+
+    async deleteAffil() {
+        const { toDelete, user } = this.state;
+        try {
+            await fetch(`http://localhost:3030/userAffiliatedWith/delete?affilId=${toDelete}`);
+            await fetch(`http://localhost:3030/affiliations/delete?id=${toDelete}`)
+            this.props.history.push({
+                pathname: '/profile',
+                state: { user: user }
+            });
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    async updateAffil() {
+        const { toUpdate, user } = this.state;
+        try {
+            await fetch(`http://localhost:3030/affiliations/update?id=${toUpdate.id}&name='${toUpdate.name}'&popular_topics='${toUpdate.popular_topics}'`);
+            this.props.history.push({
+                pathname: '/profile',
+                state: { user: user }
+            });
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     async addAffil() {
@@ -113,7 +146,7 @@ class AddAffil extends React.Component {
     }
 
     render() {
-        const { affils, affiliation } = this.state;
+        const { affils, affiliation, toDelete, toUpdate } = this.state;
         return (
             <div className="App">
                 <div className="makeAffil">
@@ -127,6 +160,28 @@ class AddAffil extends React.Component {
                             placeholder="popular topics"
                             value={affiliation.popular_topics}
                             onChange={e => this.setState({ affiliation: { ...affiliation, popular_topics: e.target.value } })} />
+                    </div>
+                    <div className="delete_affiliation">
+                        <button onClick={() => { this.deleteAffil() }}>Delete Affiliation</button>
+                        <input
+                            placeholder="id"
+                            value={toDelete}
+                            onChange={e => this.setState({ toDelete: e.target.value })} />
+                    </div>
+                    <div className="update_affiliation">
+                        <button onClick={() => { this.updateAffil() }}>Update Affiliation</button>
+                        <input
+                            placeholder="id"
+                            value={toUpdate.id}
+                            onChange={e => this.setState({ toUpdate: { ...toUpdate, id: e.target.value } })} />
+                        <input
+                            placeholder="name"
+                            value={toUpdate.name}
+                            onChange={e => this.setState({ toUpdate: { ...toUpdate, name: e.target.value } })} />
+                        <input
+                            placeholder="popular topics"
+                            value={toUpdate.popular_topics}
+                            onChange={e => this.setState({ toUpdate: { ...toUpdate, popular_topics: e.target.value } })} />
                     </div>
 
                     <div className="searchAffil">

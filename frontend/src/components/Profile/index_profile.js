@@ -41,6 +41,7 @@ class Profile extends React.Component {
     /*--------------FETCHING FUNCTIONS-----------------*/
     getAuthors = _ => {
         const { user } = this.state;
+        this.setState({ authors: [] });
         fetch(`http://localhost:3030/followedBy?userId='${user.id}'`)
             .then(response => response.json())
             .then(response => { (response.data).map(this.fetchAuthors) })
@@ -58,6 +59,7 @@ class Profile extends React.Component {
 
     getAffils = _ => {
         const { user } = this.state;
+        this.setState({ affils: [] });
         fetch(`http://localhost:3030/userAffiliatedWith?userId='${user.id}'`)
             .then(response => response.json())
             .then(response => { (response.data).map(this.fetchAffils) })
@@ -75,6 +77,7 @@ class Profile extends React.Component {
 
     getArticles = _ => {
         const { user } = this.state;
+        this.setState({ articles: [] });
         fetch(`http://localhost:3030/likedBy?userId='${user.id}'`)
             .then(response => response.json())
             .then(response => { (response.data).map(this.fetchArticles) })
@@ -224,6 +227,14 @@ class Profile extends React.Component {
                             <span>Profile</span>
                         </button>
                     </Link>
+                    <Link to={{
+                        pathname: '/searchTopCited',
+                        state: { user: this.state.user }
+                    }}>
+                        <button>
+                            <span>Search: Match Interests</span>
+                        </button>
+                    </Link>
                 </div>
 
                 <div className="user_all_info">
@@ -258,13 +269,13 @@ class Profile extends React.Component {
                         <div className="label">
                             Affiliations you're a part of:
                             <Link to={{
-                                pathname: '/addAffiliation',
+                                pathname: '/editAffiliation',
                                 state: { user: user }
                             }}>
                                 <button>
                                     <span>Add Affiliation</span>
                                 </button>
-                            </Link> 
+                            </Link>
                         </div>
                         <div className="list-affils"> {affils.map(this.renderAffil)}</div>
                     </div>

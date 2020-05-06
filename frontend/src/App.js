@@ -13,6 +13,7 @@ import Profile from './components/Profile/index_profile.js';
 import Login from './components/LogIn/index_login.js';
 import Signup from './components/LogIn/index_signup.js';
 import AddAffil from './components/AddAffil/index_addaffil.js';
+import SearchTopCited from './components/SearchTopCited/index_search_tc.js';
 
 class App extends React.Component {
     constructor(props) {
@@ -46,9 +47,14 @@ class App extends React.Component {
                                 <Profile />
                             </div>
                         </Route>
-                        <Route path="/addAffiliation">
+                        <Route path="/editAffiliation">
                             <div>
                                 <AddAffil />
+                            </div>
+                        </Route>
+                        <Route path="/searchTopCited">
+                            <div>
+                                <SearchTopCited />
                             </div>
                         </Route>
                     </Switch>
