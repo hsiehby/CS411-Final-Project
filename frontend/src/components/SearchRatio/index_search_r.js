@@ -108,6 +108,11 @@ class SearchRatio extends React.Component {
                             <span>Search: Author Ratios </span>
                         </button>
                     </Link>
+                    <Link to="/graph">
+                        <button>
+                            <span>Graph</span>
+                        </button>
+                    </Link>
                 </div>
 
                 <div className="Search">

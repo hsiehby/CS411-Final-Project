@@ -29,13 +29,6 @@ class App extends React.Component {
             <Router className="routing-pane">
                 <div className="App">
                     <Header />
-
-                    <Link to="/graph">
-                        <button>
-                            <span>Graph</span>
-                        </button>
-                    </Link>
-
                     <Switch>
                         <Route exact path="/">
                             <div>
