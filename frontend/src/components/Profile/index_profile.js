@@ -107,6 +107,15 @@ class Profile extends React.Component {
             .catch(err => console.error(err));
     }
 
+    handleLikeAffil(id) {
+        const { user } = this.state;
+        console.log(id);
+        fetch(`http://localhost:3030/userAffiliatedWith/delete?userId=${user.id}&affilId=${id}`)
+            .then(this.setState({ affils: [] }))
+            .then(this.getAffils())
+            .catch(err => console.error(err));
+    }
+
     /*--------------RENDER FUNCTIONS-----------------*/
     renderAuthor = ({ id, name, affiliation, email, interests, url_picture }) =>
         <div key={id}>
@@ -142,6 +151,9 @@ class Profile extends React.Component {
     renderAffil = ({ id, name, popular_topics }) =>
         <div key={id}>
             <div className="affil_item">
+                <div className="like">
+                    <img src={heart_filled} alt="liked" width="24" height="24" onClick={() => this.handleLikeAffil(id)} />
+                </div>
                 <div className="affil_id">
                     {id}
                 </div>
@@ -246,7 +258,17 @@ class Profile extends React.Component {
                         <div className="list-articles"> {articles.map(this.renderArticle)} </div>
                     </div>
                     <div className="user_affil">
-                        <div className="label"> Affiliations you're a part of: </div>
+                        <div className="label">
+                            Affiliations you're a part of:
+                            <Link to={{
+                                pathname: '/addAffiliation',
+                                state: { user: user }
+                            }}>
+                                <button>
+                                    <span>Add Affiliation</span>
+                                </button>
+                            </Link> 
+                        </div>
                         <div className="list-affils"> {affils.map(this.renderAffil)}</div>
                     </div>
                 </div>

@@ -2,26 +2,25 @@ const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql');
 
-const SELECT_ALL_AUTHORS = "SELECT * from authors ORDER BY id DESC limit 10";
-const SELECT_ALL_ARTICLES = "SELECT * from articles ORDER BY id DESC limit 10";
-const SELECT_ALL_AFFILS = "SELECT * from affiliations ORDER BY id limit 10";
-const SELECT_ALL_USERS = "SELECT * from users ORDER BY id limit 10";
+const SELECT_ALL_AUTHORS = "SELECT * from authors ORDER BY id limit 100";
+const SELECT_ALL_ARTICLES = "SELECT * from articles ORDER BY id limit 100";
+const SELECT_ALL_AFFILS = "SELECT * from affiliations ORDER BY id limit 100";
+const SELECT_ALL_USERS = "SELECT * from users ORDER BY id limit 100";
 
-const SELECT_ALL_AUTHOREDBY = "SELECT * from authoredBy ORDER BY articleId limit 10";
-const SELECT_ALL_LIKEDBY = "SELECT * from likedBy ORDER BY articleId limit 10";
-const SELECT_ALL_ACCESSEDBY = "SELECT * from accessedBy ORDER BY articleId limit 10";
-const SELECT_ALL_FOLLOWEDBY = "SELECT * from followedBy ORDER BY userId limit 10";
-const SELECT_ALL_ARTICLEAFFILWITH = "SELECT * from articleAffiliatedWith ORDER BY affilId limit 10";
-const SELECT_ALL_AUTHORAFFILWITH = "SELECT * from authorAffiliatedWith ORDER BY affilId limit 10";
-const SELECT_ALL_USERAFFILWITH = "SELECT * from userAffiliatedWith ORDER BY affilId limit 10";
-
+const SELECT_ALL_AUTHOREDBY = "SELECT * from authoredBy ORDER BY articleId limit 100";
+const SELECT_ALL_LIKEDBY = "SELECT * from likedBy ORDER BY articleId limit 100";
+const SELECT_ALL_ACCESSEDBY = "SELECT * from accessedBy ORDER BY articleId limit 100";
+const SELECT_ALL_FOLLOWEDBY = "SELECT * from followedBy ORDER BY userId limit 100";
+const SELECT_ALL_ARTICLEAFFILWITH = "SELECT * from articleAffiliatedWith ORDER BY affilId limit 100";
+const SELECT_ALL_AUTHORAFFILWITH = "SELECT * from authorAffiliatedWith ORDER BY affilId limit 100";
+const SELECT_ALL_USERAFFILWITH = "SELECT * from userAffiliatedWith ORDER BY affilId limit 100";
 
 const SELECT_TEST = "SELECT * FROM authors WHERE name = 'sampleName'";
 
 var current_author_id = 10001;
 var current_article_id = 1569;
-var current_affiliation_id = 1;
-var current_user_id = 1;
+var current_affiliation_id = 9999;
+var current_user_id = 9999;
 
 const app = express();
 
@@ -66,26 +65,6 @@ app.get('/authors', (req, res) => {
     });
 });
 
-app.get('/authors/:id', (req, res) => {
-    const { id } = req.params;
-    const FIND = `SELECT * FROM authors WHERE id=${id}`;
-    pool.getConnection((err, connection) => {
-        if (err) {
-            return res.send(err);
-        } else {
-            connection.query(FIND, (err, results) => {
-                if (err) {
-                    connection.release();
-                    return res.send(err);
-                } else {
-                    connection.release();
-                    return res.json({ data: results });
-                }
-            });
-        }
-    });
-});
-
 app.get('/authors/add', (req, res) => {
     const { name, affiliation, citedby, attributes, page, email, interests, url_picture } = req.query;
     const INSERT_AUTHOR = `INSERT INTO authors (id, name, affiliation, citedby, attributes, page, email, interests, url_picture)`
@@ -100,7 +79,7 @@ app.get('/authors/add', (req, res) => {
                     return res.send(err);
                 } else {
                     connection.release();
-                    return res.send("successfully added author");
+                    return res.json({ data: results });
                 }
             });
         }
@@ -186,13 +165,14 @@ app.get('/authors/update', (req, res) => {
     });
 });
 
-/** ----------------------------------------------------------------------------------------------------------ARTICLES-- **/
-app.get('/articles', (req, res) => {
+app.get('/authors/:id', (req, res) => {
+    const { id } = req.params;
+    const FIND = `SELECT * FROM authors WHERE id=${id}`;
     pool.getConnection((err, connection) => {
         if (err) {
             return res.send(err);
         } else {
-            connection.query(SELECT_ALL_ARTICLES, (err, results) => {
+            connection.query(FIND, (err, results) => {
                 if (err) {
                     connection.release();
                     return res.send(err);
@@ -205,14 +185,13 @@ app.get('/articles', (req, res) => {
     });
 });
 
-app.get('/articles/:id', (req, res) => {
-    const { id } = req.params;
-    const FIND = `SELECT * FROM articles WHERE id=${id}`;
+/** ----------------------------------------------------------------------------------------------------------ARTICLES-- **/
+app.get('/articles', (req, res) => {
     pool.getConnection((err, connection) => {
         if (err) {
             return res.send(err);
         } else {
-            connection.query(FIND, (err, results) => {
+            connection.query(SELECT_ALL_ARTICLES, (err, results) => {
                 if (err) {
                     connection.release();
                     return res.send(err);
@@ -334,6 +313,26 @@ app.get('/articles/update', (req, res) => {
     });
 });
 
+app.get('/articles/:id', (req, res) => {
+    const { id } = req.params;
+    const FIND = `SELECT * FROM articles WHERE id=${id}`;
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(FIND, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.json({ data: results });
+                }
+            });
+        }
+    });
+});
+
 /** ----------------------------------------------------------------------------------------------------------AFFILIATIONS-- **/
 app.get('/affiliations', (req, res) => {
     pool.getConnection((err, connection) => {
@@ -353,30 +352,10 @@ app.get('/affiliations', (req, res) => {
     });
 });
 
-app.get('/affiliations/:id', (req, res) => {
-    const { id } = req.params;
-    const FIND = `SELECT * FROM affiliations WHERE id=${id}`;
-    pool.getConnection((err, connection) => {
-        if (err) {
-            return res.send(err);
-        } else {
-            connection.query(FIND, (err, results) => {
-                if (err) {
-                    connection.release();
-                    return res.send(err);
-                } else {
-                    connection.release();
-                    return res.json({ data: results });
-                }
-            });
-        }
-    });
-});
-
 app.get('/affiliations/add', (req, res) => {
     const { name, popular_topics } = req.query;
     const INSERT_AFFIL = `INSERT INTO affiliations (id, name, popular_topics)`
-        + `VALUES(` + (current_affiliation_id++) + `, '${name}', '${popular_topics}')`;
+        + `VALUES(` + (current_affiliation_id) + `, '${name}', '${popular_topics}')`;
     pool.getConnection((err, connection) => {
         if (err) {
             return res.send(err);
@@ -387,7 +366,7 @@ app.get('/affiliations/add', (req, res) => {
                     return res.send(err);
                 } else {
                     connection.release();
-                    return res.send("successfully added affiliation");
+                    return res.json({ data: { id: current_affiliation_id++ } });
                 }
             });
         }
@@ -444,6 +423,26 @@ app.get('/affiliations/update', (req, res) => {
                 } else {
                     connection.release();
                     return res.send("successfully updated affiliation");
+                }
+            });
+        }
+    });
+});
+
+app.get('/affiliations/:id', (req, res) => {
+    const { id } = req.params;
+    const FIND = `SELECT * FROM affiliations WHERE id=${id}`;
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(FIND, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.json({ data: results });
                 }
             });
         }

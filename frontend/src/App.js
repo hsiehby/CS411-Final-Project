@@ -12,6 +12,7 @@ import Home from './components/Home/index_home.js';
 import Profile from './components/Profile/index_profile.js';
 import Login from './components/LogIn/index_login.js';
 import Signup from './components/LogIn/index_signup.js';
+import AddAffil from './components/AddAffil/index_addaffil.js';
 
 class App extends React.Component {
     constructor(props) {
@@ -43,6 +44,11 @@ class App extends React.Component {
                         <Route path="/profile">
                             <div>
                                 <Profile />
+                            </div>
+                        </Route>
+                        <Route path="/addAffiliation">
+                            <div>
+                                <AddAffil />
                             </div>
                         </Route>
                     </Switch>
