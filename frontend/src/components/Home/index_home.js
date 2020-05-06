@@ -9,6 +9,9 @@ class Home extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            originalAuthors: [],
+            originalArticles: [],
+            originalAffils: [],
             authors: [],
             articles: [],
             affils: [],
@@ -35,21 +38,21 @@ class Home extends React.Component {
     getAuthors = _ => {
         fetch('http://localhost:3030/authors/')
             .then(response => response.json())
-            .then(response => this.setState({ authors: response.data }))
+            .then(response => this.setState({ originalAuthors: response.data, authors: response.data }))
             .catch(err => console.error(err))
     }
 
     getArticles = _ => {
         fetch('http://localhost:3030/articles/')
             .then(response => response.json())
-            .then(response => this.setState({ articles: response.data }))
+            .then(response => this.setState({ originalArticles: response.data, articles: response.data }))
             .catch(err => console.error(err))
     }
 
     getAffils = _ => {
         fetch('http://localhost:3030/affiliations/')
             .then(response => response.json())
-            .then(response => this.setState({ affils: response.data }))
+            .then(response => this.setState({ originalAffils: response.data, affils: response.data }))
             .catch(err => console.error(err))
     }
 
@@ -145,14 +148,74 @@ class Home extends React.Component {
     }
 
     /*------------------SEARCH FUNCTIONS----------------*/
+    sortId(value, filteredAffil, filteredAuthors, filteredArticles) {
+        var sortedAffil = filteredAffil;
+        sortedAffil = filteredAffil.sort((a, b) => {
+            var nameA = a.name.toUpperCase();
+            var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+            if (nameA < nameB) {
+                return -1;
+            }
+            if (nameA > nameB) {
+                return 1;
+            }
+            return 0;
+        });
+
+        var sortedAuthors = filteredAuthors;
+        sortedAuthors = filteredAuthors.sort((a, b) => {
+            var nameA = a.name.toUpperCase();
+            var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+            if (nameA < nameB) {
+                return -1;
+            }
+            if (nameA > nameB) {
+                return 1;
+            }
+            return 0;
+        });
+
+        var sortedArticles = filteredArticles;
+        sortedArticles = filteredArticles.sort((a, b) => {
+            var nameA = a.name.toUpperCase();
+            var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+            if (nameA < nameB) {
+                return -1;
+            }
+            if (nameA > nameB) {
+                return 1;
+            }
+            return 0;
+        });
+
+        this.setState({
+            authors: sortedAuthors,
+            articles: sortedArticles,
+            affils: sortedAffil
+        });
+    }
+
+    updateChange(value) {
+        const filteredAffil = this.state.originalAffils.filter(affil => (
+            affil.name.toLowerCase().includes(value.toLowerCase())
+        ));
+        const filteredAuthors = this.state.originalAuthors.filter(author => (
+            author.name.toLowerCase().includes(value.toLowerCase())
+        ));
+        const filteredArticles = this.state.originalArticles.filter(article => (
+            article.name.toLowerCase().includes(value.toLowerCase())
+        ));
+        this.sortId(value, filteredAffil, filteredAuthors, filteredArticles);
+    }
+
     handleSearchChange(event) {
         const { value } = event.target;
         this.setState({ searchInput: value });
-        //TODO: need to do some form of filtering on this.state.authors
+        this.updateChange(value);
     }
 
     render() {
-        const { authors, author, articles, affils } = this.state;
+        const { authors, articles, affils } = this.state;
         return (
             <div className="container">
                 <div className="navigation_buttons">
