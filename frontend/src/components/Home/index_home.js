@@ -34,6 +34,7 @@ class Home extends React.Component {
         this.getAuthors();
         this.getArticles();
         this.getAffils();
+        this.sortId(this.state.affils, this.state.authors, this.state.articles);
     }
 
     async getAuthors() {
@@ -107,7 +108,6 @@ class Home extends React.Component {
                 .then(response => {
                     let newOrigAffils = this.state.originalAffils;
                     if (response.data.length > 0) {
-                        console.log(response.data);
                         newOrigAffils.push({
                             ...affil,
                             like: heart_filled
@@ -156,10 +156,10 @@ class Home extends React.Component {
 
     /*-------------------RENDER FUCNTIONS---------------------*/
     renderAuthor = ({ id, name, affiliation, email, interests, url_picture, like }) =>
-        <div key={id}>
+        <div key={(id, name)}>
             <div className="author_item">
                 <div className="like">
-                    <img src={like} alt="liked" width="24" height="24" onClick={() => this.handleLikeAuthor(id)} />
+                    <img src={like} alt="liked" width="24" height="24" onClick={() => this.handleLikeAuthor(id, like)} />
                 </div>
                 <div className="author_id">
                     {id}
@@ -187,10 +187,10 @@ class Home extends React.Component {
         </div>
 
     renderAffil = ({ id, name, popular_topics, like }) =>
-        <div key={id}>
+        <div key={(id, name)}>
             <div className="affil_item">
                 <div className="like">
-                    <img src={like} alt="liked" width="24" height="24" onClick={() => this.handleLikeAffil(id)} />
+                    <img src={like} alt="liked" width="24" height="24" onClick={() => this.handleLikeAffil(id, like)} />
                 </div>
                 <div className="affil_id">
                     {id}
@@ -207,10 +207,10 @@ class Home extends React.Component {
         </div>
 
     renderArticle = ({ id, pub_title, pub_year, pub_publisher, like}) =>
-        <div key={id}>
+        <div key={(id, pub_title)}>
             <div className="article_item">
                 <div className="like">
-                    <img src={like} alt="liked" width="24" height="24" onClick={() => this.handleLikeArticle(id)} />
+                    <img src={like} alt="liked" width="24" height="24" onClick={() => this.handleLikeArticle(id, like)} />
                 </div>
                 <div className="article_id">
                     {id}
@@ -233,64 +233,99 @@ class Home extends React.Component {
         </div>
 
     /*------------------LIKE FUNCTIONS----------------*/
-    handleLikeAuthor(id) {
-        console.log(id);
+    async handleLikeAuthor(id, like) {
+        const { user } = this.state;
+        try {
+            if (like === heart_filled) {
+                await fetch(`http://localhost:3030/followedBy/delete?userId=${user.id}&authorId=${id}`);
+            } else {
+                await fetch(`http://localhost:3030/followedBy/add?userId=${user.id}&authorId=${id}`);
+            }
+            this.setState({ originalAuthors: [], authors: [] }, () => { this.getAuthors(); this.sortAuthors(this.state.authors); });
+        } catch (e) {
+            console.error(e);
+        }
     }
 
-    handleLikeAffil(id) {
-        console.log(id);
+    async handleLikeAffil(id, like) {
+        const { user } = this.state;
+        try {
+            if (like === heart_filled) {
+                await fetch(`http://localhost:3030/userAffiliatedWith/delete?userId=${user.id}&affilId=${id}`);
+            } else {
+                await fetch(`http://localhost:3030/userAffiliatedWith/add?userId=${user.id}&affilId=${id}`);
+            }
+            this.setState({ originalAffils: [], affils: [] }, () => { this.getAffils(); this.sortAffil(this.state.authors); });
+        } catch (e) {
+            console.error(e);
+        }
     }
 
-    handleLikeArticle(id) {
-        console.log(id);
+    async handleLikeArticle(id, like) {
+        const { user } = this.state;
+        try {
+            if (like === heart_filled) {
+                await fetch(`http://localhost:3030/likedBy/delete?userId=${user.id}&articleId=${id}`);
+            } else {
+                await fetch(`http://localhost:3030/likedBy/add?userId=${user.id}&articleId=${id}`);
+            }
+            this.setState({ originalArticles: [], articles: [] }, () => { this.getArticles(); this.sortArticles(this.state.articles); });
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     /*------------------SEARCH FUNCTIONS----------------*/
-    sortId(value, filteredAffil, filteredAuthors, filteredArticles) {
+    sortAffil(filteredAffil) {
         var sortedAffil = filteredAffil;
         sortedAffil = filteredAffil.sort((a, b) => {
-            var nameA = a.name.toUpperCase();
-            var nameB = b.name.toUpperCase(); // ignore upper and lowercase
-            if (nameA < nameB) {
-                return -1;
-            }
-            if (nameA > nameB) {
-                return 1;
-            }
-            return 0;
+            console.log(a.id + " " + b.id);
+            return a.id - b.id;
         });
+        this.setState({
+            affils: []
+        }, () => {
+            this.setState({
+                affils: sortedAffil
+            });
+        }
+        );
+    }
 
+    sortAuthors(filteredAuthors) {
         var sortedAuthors = filteredAuthors;
         sortedAuthors = filteredAuthors.sort((a, b) => {
-            var nameA = a.name.toUpperCase();
-            var nameB = b.name.toUpperCase(); // ignore upper and lowercase
-            if (nameA < nameB) {
-                return -1;
-            }
-            if (nameA > nameB) {
-                return 1;
-            }
-            return 0;
+            return a.id - b.id;
         });
+        this.setState({
+            authors: []
+        }, () => {
+            this.setState({
+                authors: sortedAuthors
+            });
+        }
+        );
+    }
 
+    sortArticles(filteredArticles) {
         var sortedArticles = filteredArticles;
         sortedArticles = filteredArticles.sort((a, b) => {
-            var nameA = a.name.toUpperCase();
-            var nameB = b.name.toUpperCase(); // ignore upper and lowercase
-            if (nameA < nameB) {
-                return -1;
-            }
-            if (nameA > nameB) {
-                return 1;
-            }
-            return 0;
+            return a.id - b.id;
         });
-
         this.setState({
-            authors: sortedAuthors,
-            articles: sortedArticles,
-            affils: sortedAffil
-        });
+            articles: []
+        }, () => {
+            this.setState({
+                articles: sortedArticles
+            });
+        }
+        );
+    }
+
+    sortId(filteredAffil, filteredAuthors, filteredArticles) {
+        this.sortAffil(filteredAffil);
+        this.sortAuthors(filteredAuthors);
+        this.sortArticles(filteredArticles);
     }
 
     updateChange(value) {
@@ -303,7 +338,7 @@ class Home extends React.Component {
         const filteredArticles = this.state.originalArticles.filter(article => (
             article.name.toLowerCase().includes(value.toLowerCase())
         ));
-        this.sortId(value, filteredAffil, filteredAuthors, filteredArticles);
+        this.sortId(filteredAffil, filteredAuthors, filteredArticles);
     }
 
     handleSearchChange(event) {
@@ -342,7 +377,7 @@ class Home extends React.Component {
                 <div className="home_collection">
                     <div className="home_authors">
                         <div className="label"> Authors: </div>
-                        <div className="list-authors"> {authors.map(this.renderAuthor)} </div>
+                        <div className="list-authors"> {authors.map(this.renderAuthor)}</div>
                     </div>
                     <div className="home_articles">
                         <div className="label"> Articles: </div>

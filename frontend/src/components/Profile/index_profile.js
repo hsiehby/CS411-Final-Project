@@ -190,9 +190,6 @@ class Profile extends React.Component {
                     <div className="article_pub_year">
                         {pub_year}
                     </div>
-                    <div className="article_pub_url">
-                        {pub_url}
-                    </div>
                 </div>
             </div>
         </div>
