@@ -51,6 +51,7 @@ class Login extends React.Component {
                         value={email}
                         onChange={e => this.setState({ email: e.target.value })} />
                     <input
+                        type="password"
                         placeholder="password"
                         value={password}
                         onChange={e => this.setState({ password: e.target.value })} /> 

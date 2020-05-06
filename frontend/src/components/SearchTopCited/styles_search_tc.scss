@@ -1,0 +1,17 @@
+.results_item {
+    margin: 1rem;
+    padding: 1rem;
+    border: solid black 1px;
+    display: flex;
+    flex-direction: column;
+}
+
+.results_affil {
+    font-size: medium;
+    margin: 1rem;
+}
+
+.results_interests {
+    font-size: small;
+    margin: 1rem;
+}

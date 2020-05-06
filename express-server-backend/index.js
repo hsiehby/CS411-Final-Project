@@ -2,9 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql');
 
-const SELECT_ALL_AUTHORS = "SELECT * from authors ORDER BY id limit 200";
-const SELECT_ALL_ARTICLES = "SELECT * from articles ORDER BY id limit 200";
-const SELECT_ALL_AFFILS = "SELECT * from affiliations ORDER BY id limit 200";
+const SELECT_ALL_AUTHORS = "SELECT * from authors ORDER BY id limit 100";
+const SELECT_ALL_ARTICLES = "SELECT * from articles ORDER BY id limit 100";
+const SELECT_ALL_AFFILS = "SELECT * from affiliations ORDER BY id limit 100";
 const SELECT_ALL_USERS = "SELECT * from users ORDER BY id limit 100";
 
 const SELECT_ALL_AUTHOREDBY = "SELECT * from authoredBy ORDER BY articleId limit 100";
@@ -15,7 +15,26 @@ const SELECT_ALL_ARTICLEAFFILWITH = "SELECT * from articleAffiliatedWith ORDER B
 const SELECT_ALL_AUTHORAFFILWITH = "SELECT * from authorAffiliatedWith ORDER BY affilId limit 100";
 const SELECT_ALL_USERAFFILWITH = "SELECT * from userAffiliatedWith ORDER BY affilId limit 100";
 
-const SELECT_TEST = "SELECT * FROM authors WHERE name = 'sampleName'";
+const FIND_AUTHOR_RATIO = "SET @time_threshold = 2012;\n"
+    + "SELECT total.name AS name, total.citations AS total_citations, (recent.citations / total.citations) AS ratio_recent_citations\n"
+    + "FROM\n"
+    + "  ((SELECT DISTINCT name, count(citations) AS citations\n"
+    + "      FROM articles\n"
+    + "      GROUP BY name) total\n"
+    + "INNER JOIN\n"
+    + "   (SELECT DISTINCT name, count(citations) AS citations\n"
+    + "      FROM articles\n"
+    + "      WHERE CAST(pub_year AS UNSIGNED) > @time_threshold\n"
+    + "GROUP BY name) recent\n"
+    + "ON total.name = recent.name)\n"
+    +"ORDER BY ratio_recent_citations DESC";
+const FIND_AFFIL_TOP_CITED = "select authors.affiliation, authors.interests\n"
+    + "from\n"
+    + "(select articles.affiliation, max(articles.citedby) as num_cited\n"
+    + "from articles\n"
+    + "group by articles.affiliation) max_cited\n"
+    + "join authors\n"
+    + "on(authors.affiliation = max_cited.affiliation and max_cited.num_cited = authors.citedby)";
 
 var current_author_id = 10001;
 var current_article_id = 1569;
@@ -24,6 +43,7 @@ var current_user_id = 9999;
 
 const app = express();
 
+/*
 const pool = mysql.createPool({
     connectionLimit: 100,
     waitForConnections: true,
@@ -31,6 +51,18 @@ const pool = mysql.createPool({
     host: "18.217.28.210",
     user: "developer",
     password: "@TeamTower2020",
+    database: "google_scholar_db"
+});
+*/
+
+const pool = mysql.createPool({
+    connectionLimit: 100,
+    multipleStatements: true,
+    waitForConnections: true,
+    queueLimit: 0,
+    host: "database-2.cehqpiyqjmwe.us-east-2.rds.amazonaws.com",
+    user: "admin",
+    password: "teamtower",
     database: "google_scholar_db"
 });
 
@@ -1083,7 +1115,16 @@ app.get('/userAffiliatedWith/add', (req, res) => {
 
 app.get('/userAffiliatedWith/delete', (req, res) => {
     const { userId, affilId } = req.query;
-    const DELETE_BY = `DELETE FROM userAffiliatedWith WHERE userId = '${userId}' AND affilId = '${affilId}'`;
+    let DELETE_BY = "";
+    if (userId && !affilId) {
+        DELETE_BY = `DELETE FROM userAffiliatedWith WHERE userId = '${userId}'`;
+    } else if (!userId && affilId) {
+        DELETE_BY = `DELETE FROM userAffiliatedWith WHERE affilId = '${affilId}'`;
+    } else if (userId && affilId) {
+        DELETE_BY = `DELETE FROM userAffiliatedWith WHERE userId = '${userId}' AND affilId = '${affilId}'`;
+    } else {
+        return res.send("need userId and/or affilId to delete.");
+    }
     pool.getConnection((err, connection) => {
         if (err) {
             return res.send(err);
@@ -1095,6 +1136,43 @@ app.get('/userAffiliatedWith/delete', (req, res) => {
                 } else {
                     connection.release();
                     return res.send("successfully deleted userAffiliatedWith relation");
+                }
+            });
+        }
+    });
+});
+
+//------------------------------------------complex queries-------------------------------------------------
+app.get('/affilTopCited', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(FIND_AFFIL_TOP_CITED, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.json({ data: results });
+                }
+            });
+        }
+    });
+});
+
+app.get('/authorRatio', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.send(err);
+        } else {
+            connection.query(FIND_AUTHOR_RATIO, (err, results) => {
+                if (err) {
+                    connection.release();
+                    return res.send(err);
+                } else {
+                    connection.release();
+                    return res.json({ data: results });
                 }
             });
         }
