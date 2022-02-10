@@ -13,7 +13,7 @@
     "moment": "^2.25.3",
     "neo4j-driver": "^4.0.2",
     "neovis.js": "^1.4.0",
-    "node-sass": "^4.13.1",
+    "node-sass": "^7.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.1.2",
